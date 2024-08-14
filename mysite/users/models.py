@@ -16,3 +16,15 @@ class UserProfile(models.Model):
     address = models.CharField('address', max_length=100, blank=True, default='')
     image = models.ImageField(upload_to='images/%Y/%m', default='images/default.png', max_length=100,
                               verbose_name='avatar')
+
+    class Meta:
+        verbose_name = 'User Profile'
+        verbose_name_plural = verbose_name
+
+    def __str__(self):
+        return self.owner.username
+
+
+
+
+
