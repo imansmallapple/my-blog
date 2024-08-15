@@ -1,19 +1,18 @@
 {% extends 'users/base.html' %}
 {% block head %}
-   <title>login page</title>
+   <title>register page</title>
 {% endblock head %}
 
 {% block content %}
  <div class="box">
         <h1 class="is-uppercase has-text-centered has-text-weight-bold">Chen's Blog
-            <br><span class="tag">login</span>
+            <br><span class="tag">register</span>
         </h1>
         <hr class=" dropdown-divider">
         <form action="" method="post">
             {% csrf_token %}
             {{ form.as_p }}
-            {{ form.errors }}
-            <input type="submit" style="margin-top: 1em;" class="button is-link is-fullwidth" value="submit">
+            <input type="submit" style="margin-top: 1em;" class="button is-link is-fullwidth" value="register">
         </form>
  </div>
 {% endblock content %}
