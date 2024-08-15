@@ -1,9 +1,26 @@
- <form action="" method="post">
-     {% csrf_token %}
-<!-- 	<label for="id_username">User Name：</label>-->
-<!--     <input type="text" name="username" id="id_username">-->
-<!--     <label for="id_password">Password：</label>-->
-<!--     <input type="password" name="password" id="id_password">-->
-      {{ form }}
-     <input type="submit" value="submit">
- </form>
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>login page</title>
+    <link rel="stylesheet" href="{% static 'users/bulma.css' %}">
+</head>
+<body>
+
+<div class="container">
+    <div class="box">
+        <h1 class="is-uppercase has-text-centered has-text-weight-bold">Chen's Blog
+            <br><span class="tag">login</span>
+        </h1>
+        <hr class=" dropdown-divider">
+        <form action="" method="post">
+            {% csrf_token %}
+            {{ form.as_p }}
+            <input type="submit" style="margin-top: 1em;" class="button is-link is-fullwidth" value="submit">
+        </form>
+    </div>
+</div>
+</body>
+</html>

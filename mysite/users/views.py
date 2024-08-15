@@ -1,4 +1,4 @@
-from django.shortcuts import render, HttpResponse
+from django.shortcuts import render, HttpResponse, redirect
 from django.contrib.auth import authenticate, login
 from .forms import LoginForm
 # Create your views here.
@@ -13,10 +13,11 @@ def login_view(request):
         if form.is_valid():
             username = form.cleaned_data['username']
             password = form.cleaned_data['password']
+            print(f"Username: {username}, Password: {password}")
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                return HttpResponse('login succeed!')
+                return redirect('/admin')
             else:
                 return HttpResponse('login failed!')
 
