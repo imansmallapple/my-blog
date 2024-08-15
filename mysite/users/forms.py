@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 
 class LoginForm(forms.Form):
-    username = forms.CharField(label='username', max_length=15,widget=forms.TextInput(attrs={
+    username = forms.CharField(label='username', max_length=32,widget=forms.TextInput(attrs={
         'class': 'input', 'placeholder': 'Username/Email'
     }))
     password = forms.CharField(label='password', min_length=6, widget=forms.PasswordInput(attrs={
@@ -20,8 +20,8 @@ class LoginForm(forms.Form):
 
 
 class RegisterForm(forms.ModelForm):
-    username = forms.CharField(label='username', max_length=15, widget=forms.TextInput(attrs={
-        'class': 'input', 'placeholder': 'Username'
+    email = forms.EmailField(label='email', max_length=32, widget=forms.EmailInput(attrs={
+        'class': 'input', 'placeholder': 'Email'
     }))
     password = forms.CharField(label='password', min_length=6, widget=forms.PasswordInput(attrs={
         'class': 'input', 'placeholder': 'Password'
@@ -32,14 +32,14 @@ class RegisterForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ('username', 'password')
+        fields = ('email', 'password')
 
-    def clean_username(self):
-        username = self.cleaned_data.get('username')
-        exists = User.objects.filter(username=username).exists()
+    def clean_email(self):
+        email = self.cleaned_data.get('email')
+        exists = User.objects.filter(email=email).exists()
         if exists:
             raise forms.ValidationError("User already exists!")
-        return username
+        return email
 
     def clean_repeat(self):
         if self.cleaned_data['password'] != self.cleaned_data['repeat']:
