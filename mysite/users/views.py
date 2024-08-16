@@ -1,5 +1,5 @@
 from django.shortcuts import render, HttpResponse, redirect
-from django.contrib.auth import authenticate, login
+from django.contrib.auth import authenticate, login, logout
 from .forms import LoginForm, RegisterForm, ForgetPwdForm, ModifyPwdForm
 from django.db.models import Q
 from django.contrib.auth.models import User
@@ -96,6 +96,7 @@ def forget_pwd(request):
                 return HttpResponse('Typed email is not registered!')
     return render(request, 'users/forget_pwd.html', {'form': form})
 
+
 def forget_pwd_url(request, active_code):
     if request.method != 'POST':
         form = ModifyPwdForm()
@@ -113,3 +114,8 @@ def forget_pwd_url(request, active_code):
             return HttpResponse('Modification failed!')
 
     return render(request, 'users/reset_pwd.html', {'form': form})
+
+
+def logout_view(request):
+    logout(request)
+    return redirect('users:login')
