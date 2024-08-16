@@ -26,3 +26,10 @@ def send_register_email(email, send_type='register'):
         if send_status:
             pass
 
+    elif send_type == 'forget':
+        email_title = "find password link"
+        email_body = 'Please click the following link to reset your password: http://127.0.0.1:8000/users/forget_pwd_url/{0}'.format(code)
+        # main code of sending the email
+        send_status = send_mail(email_title, email_body, 'alf138540fun@gmail.com', [email])
+        if send_status:
+            pass

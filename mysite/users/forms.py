@@ -21,7 +21,7 @@ class LoginForm(forms.Form):
 
 class RegisterForm(forms.ModelForm):
     email = forms.EmailField(label='email', max_length=32, widget=forms.EmailInput(attrs={
-        'class': 'input', 'placeholder': 'Email'
+        'class': 'input', 'placeholder': 'Username/Email'
     }))
     password = forms.CharField(label='password', min_length=6, widget=forms.PasswordInput(attrs={
         'class': 'input', 'placeholder': 'Password'
@@ -45,3 +45,17 @@ class RegisterForm(forms.ModelForm):
         if self.cleaned_data['password'] != self.cleaned_data['repeat']:
             raise forms.ValidationError("Passwords not same!")
         return self.cleaned_data['password']
+
+
+class ForgetPwdForm(forms.Form):
+    email = forms.EmailField(
+        label='email', max_length=32, widget=forms.EmailInput(attrs={
+            'class': 'input', 'placeholder': 'Username/Email'
+    })
+    )
+
+
+class ModifyPwdForm(forms.Form):
+    password = forms.CharField(label='enter new password', min_length=6,
+        widget=forms.PasswordInput(attrs={
+        'class': 'input', 'placeholder': 'Enter the password'}))

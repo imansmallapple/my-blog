@@ -1,12 +1,13 @@
 from django.shortcuts import render, HttpResponse, redirect
 from django.contrib.auth import authenticate, login
-from .forms import LoginForm, RegisterForm
+from .forms import LoginForm, RegisterForm, ForgetPwdForm, ModifyPwdForm
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.auth.backends import ModelBackend
 from .models import EmailVerifyRecord, UserProfile
 from utils.email_send import send_register_email
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.hashers import make_password
 # Create your views here.
 
 
@@ -78,3 +79,37 @@ def register(request):
 def user_profile(request):
     user = User.objects.get(username=request.user)
     return render(request, 'users/user_profile.html', {'user': user})
+
+
+def forget_pwd(request):
+    if request.method == 'GET':
+        form = ForgetPwdForm()
+    elif request.method == 'POST':
+        form = ForgetPwdForm(request.POST)
+        if form.is_valid():
+            email = form.cleaned_data['email']
+            exists = User.objects.filter(email=email).exists()
+            if exists:
+                send_register_email(email, 'forget')
+                return HttpResponse('Email sent!')
+            else:
+                return HttpResponse('Typed email is not registered!')
+    return render(request, 'users/forget_pwd.html', {'form': form})
+
+def forget_pwd_url(request, active_code):
+    if request.method != 'POST':
+        form = ModifyPwdForm()
+    else:
+        form = ModifyPwdForm(request.POST)
+        if form.is_valid():
+            record = EmailVerifyRecord.objects.get(code=active_code)
+            email = record.email
+            user = User.objects.get(email=email)
+            user.username = email
+            user.password = make_password(form.cleaned_data.get('password'))
+            user.save()
+            return HttpResponse('Modification succeed!')
+        else:
+            return HttpResponse('Modification failed!')
+
+    return render(request, 'users/reset_pwd.html', {'form': form})
