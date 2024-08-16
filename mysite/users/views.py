@@ -4,6 +4,8 @@ from .forms import LoginForm, RegisterForm
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.auth.backends import ModelBackend
+from .models import EmailVerifyRecord
+from utils.email_send import send_register_email
 # Create your views here.
 
 
@@ -15,6 +17,19 @@ class MyBackend(ModelBackend):
                 return user
         except Exception as e:
             return None
+
+
+def active_user(request, active_code):
+    all_records = EmailVerifyRecord.objects.filter(code=active_code)
+    if all_records:
+        for record in all_records:
+            email = record.email
+            user = User.objects.get(email=email)
+            user.is_staff = True
+            user.save()
+    else:
+        return HttpResponse('link error')
+    return redirect('users:login')
 
 
 def login_view(request):
@@ -47,6 +62,10 @@ def register(request):
             new_user.set_password(form.cleaned_data.get('password'))
             new_user.username = form.cleaned_data.get('email')
             new_user.save()
+
+            # send email
+            send_register_email(form.cleaned_data.get('email'),'register')
+
             return HttpResponse("Registration succeed!")
 
     context = {'form': form}

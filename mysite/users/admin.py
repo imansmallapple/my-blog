@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.contrib.auth.models import User
 # Register your models here.
-from .models import UserProfile
+from .models import UserProfile, EmailVerifyRecord
 
 from django.contrib.auth.admin import UserAdmin
 
@@ -17,3 +17,8 @@ class UserProfileAdmin(UserAdmin):
 
 
 admin.site.register(User, UserProfileAdmin)
+
+
+@admin.register(EmailVerifyRecord)
+class Admin(admin.ModelAdmin):
+    list_display = ('code', )
