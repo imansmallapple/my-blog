@@ -16,6 +16,8 @@ class UserProfile(models.Model):
     address = models.CharField('address', max_length=100, blank=True, default='')
     image = models.ImageField(upload_to='images/%Y/%m', default='images/default.png', max_length=100,
                               verbose_name='avatar')
+    description = models.TextField('introduction', max_length=200, default='')
+    signature = models.CharField('signature', max_length=100, default='')
 
     class Meta:
         verbose_name = 'User Profile'

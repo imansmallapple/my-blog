@@ -4,8 +4,9 @@ from .forms import LoginForm, RegisterForm
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.auth.backends import ModelBackend
-from .models import EmailVerifyRecord
+from .models import EmailVerifyRecord, UserProfile
 from utils.email_send import send_register_email
+from django.contrib.auth.decorators import login_required
 # Create your views here.
 
 
@@ -45,7 +46,7 @@ def login_view(request):
             user = authenticate(request, username=username, password=password)
             if user is not None:
                 login(request, user)
-                return redirect('/admin')
+                return redirect('users:user_profile')
             else:
                 return HttpResponse('login failed!')
 
@@ -70,3 +71,10 @@ def register(request):
 
     context = {'form': form}
     return render(request, 'users/register.html', context)
+
+
+# 检测登录的装饰器
+@login_required(login_url='users:login')
+def user_profile(request):
+    user = User.objects.get(username=request.user)
+    return render(request, 'users/user_profile.html', {'user': user})
