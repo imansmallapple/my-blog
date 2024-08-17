@@ -65,9 +65,15 @@ class UserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('email', )
+        widgets = {
+            'email': forms.EmailInput(attrs={'readonly': 'readonly'}),
+        }
 
 
 class UserProfileForm(forms.ModelForm):
     class Meta:
         model = UserProfile
         fields = ('nick_name', 'description', 'signature', 'birthday', 'gender', 'address', 'image')
+        widgets = {
+            'birthday': forms.DateInput(attrs={'type': 'date'}),
+        }
