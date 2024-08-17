@@ -33,14 +33,14 @@
                                     <figure class="image is-24x24">
 
                                         {% if user.userprofile.image %}
-                                            <img class=" is-rounded" src="{{ MEDIA_URL }}{{ user.userprofile.image }}" alt="" srcset="">
+                                            <img class=" is-rounded" src="{{ MEDIA_URL }}{{ user.userprofile.image.url }}" alt="" srcset="">
                                         {% else %}
                                             <img class=" is-rounded" src="{% static 'users/images/avatar.png' %}" alt="" srcset="">
                                         {% endif %}
                                     </figure>&nbsp;&nbsp;
 
-                                        {% if user.userprofile.nike_name %}
-                                        <span class="has-text-grey-dark">{{ user.userprofile.nike_name }}</span>
+                                        {% if user.userprofile.nick_name %}
+                                        <span class="has-text-grey-dark">{{ user.userprofile.nick_name }}</span>
                                         {% else %}
                                         <span class="has-text-grey-dark">{{ user.username }}</span>
                                         {% endif %}
@@ -78,5 +78,187 @@
 
         </div>
     </nav>
+ <section class="section">
+        <div class="container">
+
+            <div class="columns">
+                <div class="column is-2">
+                    <div class="card">
+                        <header class="card-header">
+                            <p class="card-header-title">Personal Center</p>
+                            <a href="" class="card-header-icon" aria-label="more options">
+                                <span class="icon">
+                                    <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                </span>
+                            </a>
+                        </header>
+                        <div class="card-content menu">
+                            <ul class="content menu-list">
+                                <li><a href="{% url 'users:user_profile' %}">Personal Information</a></li>
+                                <!-- <li><a href="">修改密码</a></li> -->
+
+                            </ul>
+                        </div>
+
+                    </div>
+                    <div class="card">
+                            <header class="card-header">
+                                <p class="card-header-title">Content Management</p>
+                                <a href="#" class="card-header-icon" aria-label="more options">
+                                    <span class="icon">
+                                        <i class="fas fa-angle-down" aria-hidden="true"></i>
+                                    </span>
+                                </a>
+                            </header>
+                            <div class="card-content menu">
+                                <ul class="content menu-list">
+                                    <li><a href="">Add Blog</a></li>
+                                    <li><a href="">Published Blog</a></li>
+                                    <li><a href="">Draft Box</a></li>
+                                    <li><a href="">Comments</a></li>
+                                    <li><a href="">Data Analysis</a></li>
+                                </ul>
+                            </div>
+
+                    </div>
+                </div>
+                <div class="column is-10">
+                    <div class="box is-radiusless is-shadowless">
+
+                        <div class="tabs">
+                            <ul>
+
+                              {% block title %}
+                              <li class="is-active"><a>Account details</a></li>
+                              {% endblock %}
+
+                            </ul>
+                        </div>
+
+
+
+                    {% block content %}
+                    <div class="columns is-mobile" style="border-bottom: #ededed solid 1px; padding-bottom: 1rem">
+                        <div class="column is-narrow">
+                            <figure class="image is-96x96">
+
+                                {% if user.userprofile.image %}
+                                    <img class="is-rounded" src="{{ MEDIA_URL }}{{ user.userprofile.image.url }}">
+                                    {% else %}
+                                    <img class="is-rounded" src=" {% static 'users/images/avatar.png' %}">
+                                {% endif %}
+
+
+                            </figure>
+                        </div>
+                        <div class="column is-narrow">
+                            <div style="padding-top: 1.5rem;">
+
+                                {% if user.userprofile.nick_name %}
+                                    <h1 class="title is-size-4">{{ user.userprofile.nick_name }}</h1>
+                                    {% else %}
+                                    <h1 class="title is-size-4">{{ user.username }}</h1>
+                                {% endif %}
+
+
+                                {% if user.userprofile.signature %}
+                                    <p class="subtitle is-size-6">{{ user.userprofile.signature }}</p>
+                                    {% else %}
+                                    <p class="subtitle is-size-6">Haven't set user signature</p>
+                                {% endif %}
+
+
+                            </div>
+                        </div>
+                        <div class="column is-narrow-mobile">
+                            <a class=" button is-light is-pulled-right" href="{}" style="margin-top: 1.8rem">Modify Information</a>
+                        </div>
+                    </div>
+
+                    <div class="columns" style="padding:1rem 0; ">
+                        <div class="column is-2">
+                            <p>Personal Information</p>
+                        </div>
+                        <div class="column">
+                            <div class="columns is-mobile" style="border-bottom: #ededed solid 1px">
+                                <div class="column is-2">
+                                   <span class=" has-text-grey-light">Nickname</span>
+                                </div>
+                                    <div class="column is-narrow">
+                                        {% if user.userprofile.nick_name %}
+                                        <span class=" has-text-black-ter">{{ user.userprofile.nick_name }}</span>
+                                        {% else %}
+                                        <span class=" has-text-black-ter">Haven't set nickname</span>
+                                        {% endif %}
+
+                                    </div>
+                                <!-- <div class="column has-text-right">
+                                    <a href="">更改类型</a>
+                                </div> -->
+
+                            </div>
+                            <div class="columns is-mobile" style="border-bottom: #ededed solid 1px">
+                                <div class="column is-2">
+                                   <span class=" has-text-grey-light">Gender</span>
+                                </div>
+                                <div class="column is-narrow">
+                                    {% if user.userprofile %}
+                                    <span class=" has-text-black-ter">{{ user.userprofile.get_gender_display }}</span>
+                                    {% else %}
+                                    <span class=" has-text-black-ter">Haven't set</span>
+                                    {% endif %}
+                                </div>
+
+                            </div>
+                            <div class="columns is-mobile" style="border-bottom: #ededed solid 1px">
+                                <div class="column is-2">
+                                   <span class=" has-text-grey-light">Email</span>
+                                </div>
+                                <div class="column is-narrow">
+                                    <span class=" has-text-black-ter">{{ user.email }}</span>
+                                </div>
+
+                            </div>
+
+                            <div class="columns is-mobile" style="border-bottom: #ededed solid 1px">
+                                <div class="column is-2">
+                                   <span class=" has-text-grey-light">Address</span>
+                                </div>
+                                <div class="column is-narrow">
+                                    {% if user.userprofile %}
+                                    <span class=" has-text-black-ter">{{ user.userprofile.address }}</span>
+                                    {% else %}
+                                    <span class=" has-text-black-ter">Haven't add address</span>
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="columns" style="padding:1rem 0; ">
+                        <div class="column is-2">
+                            <p>Personal Introduction</p>
+                        </div>
+                        <div class="column">
+                            <div class="content">
+                                {% if user.userprofile.description %}
+                                {{ user.userprofile.description }}
+                                {% else %}
+                                Haven't add personal introduction
+                                {% endif %}
+
+                            </div>
+                        </div>
+                    </div>
+                    {% endblock  %}
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </section>
 </body>
 </html>
