@@ -12,4 +12,5 @@ urlpatterns = [
     path('forget_pwd_url/<active_code>', views.forget_pwd_url, name='forget_pwd_url'),
     path('user_profile/', views.user_profile, name='user_profile'),
     path('logout/', views.logout_view, name='logout'),
+    path('edit/', views.edit_users, name='edit'),
 ]
