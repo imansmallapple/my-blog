@@ -1,1 +1,19 @@
-shou ye
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Index page</title>
+    <link rel="stylesheet" href="{% static 'users/bulma.css' %}">
+</head>
+<body>
+<h1>Categories of article</h1>
+<div class="container">
+    {% for category in category_list %}
+        {{ category.name }}<br/>
+        {{ category.description }}<br/>
+    {% endfor %}
+</div>
+</body>
+</html>
