@@ -1,19 +1,6 @@
-<!DOCTYPE html>
-{% load static %}
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Index page</title>
-    <link rel="stylesheet" href="{% static 'users/bulma.css' %}">
-</head>
-<body>
-<h1>Categories of article</h1>
-<div class="container">
-    {% for category in category_list %}
-        {{ category.name }}<br/>
-        {{ category.description }}<br/>
-    {% endfor %}
+{% extends 'blog/base.html' %}
+{% block right-content %}
+<div class="box">
+    RIGHT
 </div>
-</body>
-</html>
+{% endblock %}
