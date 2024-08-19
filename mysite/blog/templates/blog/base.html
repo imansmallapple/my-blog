@@ -33,14 +33,14 @@
   <div id="navbarBasicExample" class="navbar-menu">
     <div class="navbar-start">
         {% block navbar-start %}
-      <a class="navbar-item">
+      <a class="navbar-item" href="/">
         Home
       </a>
 
         {% get_category_list as category_list %}
 
         {% for category in category_list %}
-        <a class="navbar-item">
+        <a class="navbar-item" href="{% url 'blog:category_list' category.id %}">
         {{ category.name }}
         </a>
         {% endfor %}
@@ -70,17 +70,28 @@
     </div>
 
     <div class="navbar-end">
+        {% block navbar-end %}
       <div class="navbar-item">
+          {% if user.is_authenticated %}
+          <div class="buttons">
+              <span class="tag is-info is-medium" style="background-color: rgba(128, 128, 128, 0.3); color: #000;">Hi! {{request.user.username}}</span>
+              <a href="{% url 'users:user_profile' %}" class="button is-info">My Profile</a>
+              <a href="{% url 'users:logout' %}" class="button is-danger">Logout</a>
+          </div>
+          {% else %}
         <div class="buttons">
-          <a class="button is-primary">
+          <a class="button is-primary" href="{% url 'users:register' %}" target="_blank">
             <strong>Sign up</strong>
           </a>
-          <a class="button is-light">
+          <a class="button is-light" href="{% url 'users:login' %}" target="_blank">
             Log in
           </a>
         </div>
+          {% endif %}
       </div>
+        {% endblock %}
     </div>
+
   </div>
 </nav>
 
@@ -92,7 +103,7 @@
             {% for article in article_list %}
             <div class="box">
                 <h1 class="is-size-5 has-text-weight-bold">
-                    <a href="">{{article.title}}</a>
+                    <a href="{% url 'blog:article_detail' article.id %}">{{article.title}}</a>
                 </h1>
                 <div class="is-size-7 has-text-grey-light">
                 <span class="mr-6">Author: {{ article.owner }}</span>

@@ -1,0 +1,16 @@
+{% extends 'blog/base.html' %}
+{% block page-content %}
+<div class="box">
+<h1 class="is-size-5 has-text-weight-bold">
+    <a>{{article.title}}</a>
+</h1>
+    <div class="is-size-7 has-text-grey-light pt-1 pb-1">
+        <span class="mr-6">Author: {{article.owner}}</span>
+        <span> Publish Date: {{article.add_date}}</span>
+    </div>
+    <div class="content">
+        {{article.content|safe}}
+    </div>
+</div>
+
+{% endblock %}

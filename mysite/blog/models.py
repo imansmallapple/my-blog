@@ -30,6 +30,7 @@ class Article(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Author')
     add_date = models.DateTimeField(auto_now_add=True, verbose_name='Publish Time')
     mod_date = models.DateTimeField(auto_now_add=True, verbose_name='Last Modified Time')
+    category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Category')
 
     class Meta:
         verbose_name = 'Article'
