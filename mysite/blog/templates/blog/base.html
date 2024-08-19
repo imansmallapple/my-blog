@@ -100,6 +100,7 @@
     <div class="columns">
         <div class="column is-8">
         {% block page-content %}
+            {% if article_list %}
             {% for article in article_list %}
             <div class="box">
                 <h1 class="is-size-5 has-text-weight-bold">
@@ -112,6 +113,11 @@
                 <p>{{article.description|truncatechars:100}}</p>
             </div>
             {% endfor %}
+            {% else %}
+            <div class="box">
+                <p class="has-text-danger">Article not exist!</p>
+            </div>
+            {% endif %}
         {% endblock %}
         </div>
         <div class="column is-4">
