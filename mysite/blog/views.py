@@ -19,5 +19,15 @@ def category_list(request, category_id):
 
 def article_detail(request, article_id):
     article = get_object_or_404(Article, id=article_id)
-    context = {'article': article}
+
+    # ordered by article id
+    prev_article = Article.objects.filter(id__lt=article_id).last()
+    next_article = Article.objects.filter(id__gt=article_id).first()
+
+    # ordered by article publish date
+
+
+    print(prev_article, next_article)
+
+    context = {'article': article, 'prev_article': prev_article, 'next_article': next_article}
     return render(request, 'blog/detail.html', context)

@@ -13,4 +13,25 @@
     </div>
 </div>
 
+<div class="box">
+        <div class="level">
+        <div class="level-left">
+
+            {% if prev_article %}
+            <span>Last Article:</span>
+            <a href="{% url 'blog:article_detail' prev_article.id %}" class="level-item">{{ prev_article.title }}</a>
+            {% else %}
+            <span class="has-text-danger-dark is-size-7">Not exist last one</span>
+            {% endif %}
+        </div>
+        <div class="level-right">
+             {% if next_article %}
+            <span>Next Article:</span>
+            <a href="{% url 'blog:article_detail' next_article.id %}" class="level-item">{{ next_article.title }}</a>
+             {% else %}
+            <span class="has-text-danger-dark is-size-7">Already last one</span>
+             {% endif %}
+        </div>
+    </div>
+</div>
 {% endblock %}
