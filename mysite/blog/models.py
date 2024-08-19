@@ -1,5 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils.functional import cached_property
+from django.template.loader import render_to_string
 
 
 class Category(models.Model):
@@ -38,3 +40,64 @@ class Article(models.Model):
 
     def __str__(self):
         return self.title
+
+
+class SideBar(models.Model):
+    STATUS = (
+        (1, 'Hide'),
+        (2, 'Perform'),
+    )
+
+    DISPLAY_TYPE = (
+        (1, 'Search'),
+        (2, 'Newest Article'),
+        (3, 'Hottest Article'),
+        (4, 'Recently Comment'),
+        (5, 'Article Archiving'),
+        (6, 'HTML'),
+    )
+
+    title = models.CharField(max_length=50, verbose_name='Title')
+    display_type = models.PositiveIntegerField(default=1, choices=DISPLAY_TYPE, verbose_name='Display types')
+    content = models.CharField(max_length=500, blank=True, default='', verbose_name='Content',
+                               help_text="Can be empty if setting isn't HTML type")
+    sort = models.PositiveIntegerField(default=1, verbose_name='Sort', help_text="Larger id with former place")
+    status = models.PositiveIntegerField(default=2, choices=STATUS, verbose_name="Status")
+    add_date = models.DateTimeField(auto_now_add=True, verbose_name="Created Time")
+
+    class Meta:
+        verbose_name = "Side bar"
+        verbose_name_plural = verbose_name
+        ordering = ['-sort']
+
+    def __str__(self):
+        return self.title
+
+    @classmethod
+    def get_sidebar(cls):
+        return cls.objects.filter(status=2)
+
+    @property
+    def get_content(self):
+        if self.display_type == 1:
+            context = {}
+            return render_to_string('blog/sidebar/search.html', context=context)
+
+        elif self.display_type == 2:
+            context = {}
+            return render_to_string('blog/sidebar/new_article.html', context=context)
+
+        elif self.display_type == 3:
+            context = {}
+            return render_to_string('blog/sidebar/hot_article.html', context=context)
+
+        elif self.display_type == 4:
+            context = {}
+            return render_to_string('blog/sidebar/comment.html', context=context)
+
+        elif self.display_type == 5:
+            context = {}
+            return render_to_string('blog/sidebar/archives.html', context=context)
+        elif self.display_type == 6:
+
+            return self.content
