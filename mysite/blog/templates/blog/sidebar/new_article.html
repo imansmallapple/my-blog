@@ -1,1 +1,9 @@
-New article
+{% load category %}
+{% get_newest_article as article_list %}
+{% for article in article_list %}
+<ul>
+    <li>
+        <a href="{% url 'blog:article_detail' article.id %}">{{ article.title }}</a>
+    </li>
+</ul>
+{% endfor %}

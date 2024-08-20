@@ -33,6 +33,8 @@ class Article(models.Model):
     add_date = models.DateTimeField(auto_now_add=True, verbose_name='Publish Time')
     mod_date = models.DateTimeField(auto_now_add=True, verbose_name='Last Modified Time')
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Category')
+    is_hot = models.BooleanField(default=False, verbose_name='Is Popular')
+    views = models.IntegerField(default=0, verbose_name='Views')
 
     class Meta:
         verbose_name = 'Article'

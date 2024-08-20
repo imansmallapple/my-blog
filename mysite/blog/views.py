@@ -24,6 +24,8 @@ def article_detail(request, article_id):
     prev_article = Article.objects.filter(id__lt=article_id).last()
     next_article = Article.objects.filter(id__gt=article_id).first()
 
+    print(article.views)
+    Article.objects.filter(id=article_id).update(views=F('views') + 1)  # not recommended
     context = {'article': article, 'prev_article': prev_article, 'next_article': next_article}
     return render(request, 'blog/detail.html', context)
 
