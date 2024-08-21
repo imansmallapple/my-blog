@@ -27,3 +27,8 @@ def get_hot_article():
 @register.simple_tag
 def get_top_viewed_article():
     return Article.objects.order_by('-views')[:3]
+
+
+@register.simple_tag
+def get_archives():
+    return Article.objects.dates('add_date', 'month', order='DESC')[:8]

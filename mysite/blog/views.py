@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from .models import Category, Article, Tag
 from django.db.models import Q, F
-
+from datetime import datetime
 
 def index(request):
     category_list = Category.objects.all()
@@ -41,3 +41,10 @@ def search(request):
         'article_list': article_list
     }
     return render(request, 'blog/index.html', context)
+
+
+def archives(request, year, month):
+    article_list = Article.objects.filter(add_date__year=year, add_date__month=month)
+    month_name = datetime(year=int(year), month=int(month), day=1).strftime('%B')
+    context = {'article_list': article_list, 'year': year, 'month': month_name}
+    return render(request, 'blog/archives_list.html', context)
