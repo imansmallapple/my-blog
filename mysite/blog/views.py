@@ -2,18 +2,25 @@ from django.shortcuts import render, get_object_or_404
 from .models import Category, Article, Tag
 from django.db.models import Q, F
 from datetime import datetime
+from django.core.paginator import Paginator
+
 
 def index(request):
-    category_list = Category.objects.all()
     article_list = Article.objects.all()
-    context = {'category_list': category_list, 'article_list': article_list}
+    paginator = Paginator(article_list, 2)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context = {'page_obj': page_obj}
     return render(request, 'blog/index.html', context)
 
 
 def category_list(request, category_id):
     category = get_object_or_404(Category, id=category_id)
     articles = category.article_set.all()
-    context = {'category': category, 'article_list': articles}
+    paginator = Paginator(articles, 2)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context = {'category': category, 'page_obj': page_obj}
     return render(request, 'blog/list.html', context)
 
 
@@ -37,14 +44,20 @@ def search(request):
         article_list = Article.objects.all()
     else:
         article_list = Article.objects.filter(Q(title__icontains=keyword) | Q(title__icontains=keyword) | Q(content__icontains=keyword))
+    paginator = Paginator(article_list, 2)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     context = {
-        'article_list': article_list
+        'page_obj': page_obj
     }
     return render(request, 'blog/index.html', context)
 
 
 def archives(request, year, month):
     article_list = Article.objects.filter(add_date__year=year, add_date__month=month)
+    paginator = Paginator(article_list, 2)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
     month_name = datetime(year=int(year), month=int(month), day=1).strftime('%B')
-    context = {'article_list': article_list, 'year': year, 'month': month_name}
+    context = {'page_obj': page_obj, 'article_list': article_list, 'year': year, 'month': month_name}
     return render(request, 'blog/archives_list.html', context)
