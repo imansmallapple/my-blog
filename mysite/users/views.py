@@ -30,7 +30,7 @@ def active_user(request, active_code):
             user.save()
     else:
         return HttpResponse('link error')
-    return redirect('users:login')
+    return redirect('/')
 
 
 def login_view(request):
@@ -65,7 +65,7 @@ def register(request):
             new_user.save()
 
             # send email
-            send_register_email(form.cleaned_data.get('email'),'register')
+            send_register_email(form.cleaned_data.get('email'), 'register')
 
             return HttpResponse("Registration succeed!")
 
@@ -117,7 +117,7 @@ def forget_pwd_url(request, active_code):
 
 def logout_view(request):
     logout(request)
-    return redirect('users:login')
+    return redirect('/')
 
 
 @login_required(login_url='users:login')   # 登录之后允许访问

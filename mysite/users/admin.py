@@ -20,5 +20,5 @@ admin.site.register(User, UserProfileAdmin)
 
 
 @admin.register(EmailVerifyRecord)
-class Admin(admin.ModelAdmin):
+class EmailVerifyRecordAdmin(admin.ModelAdmin):
     list_display = ('code', )

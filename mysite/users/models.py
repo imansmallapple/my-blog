@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.utils import timezone
 # Create your models here.
 
 
@@ -37,6 +38,7 @@ class EmailVerifyRecord(models.Model):
     code = models.CharField("verification code", max_length=20)
     email = models.EmailField('email', max_length=35)
     send_type = models.CharField(choices=SEND_TYPE_CHOICES, max_length=20, default='register')
+    send_time = models.DateTimeField('time', default=timezone.now().strftime('%Y-%m-%d %H:%M:%S'))
 
     class Meta:
         verbose_name = "Email verification code"
