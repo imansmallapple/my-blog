@@ -26,7 +26,7 @@ def active_user(request, active_code):
         for record in all_records:
             email = record.email
             user = User.objects.get(email=email)
-            user.is_staff = True
+            user.is_active = True
             user.save()
     else:
         return HttpResponse('link error')
@@ -62,6 +62,7 @@ def register(request):
             new_user = form.save(commit=False)
             new_user.set_password(form.cleaned_data.get('password'))
             new_user.username = form.cleaned_data.get('email')
+            new_user.is_active = False
             new_user.save()
 
             # send email
