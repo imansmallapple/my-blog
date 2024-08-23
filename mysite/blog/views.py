@@ -6,7 +6,7 @@ from django.core.paginator import Paginator
 
 
 def index(request):
-    article_list = Article.objects.all()
+    article_list = Article.objects.all().order_by('-add_date')
     paginator = Paginator(article_list, 2)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
