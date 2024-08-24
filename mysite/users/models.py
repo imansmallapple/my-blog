@@ -48,3 +48,10 @@ class EmailVerifyRecord(models.Model):
         return self.code
 
 
+class PendingUser(models.Model):
+    email = models.EmailField(unique=True)
+    password = models.CharField(max_length=128)  # 保存加密后的密码
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return self.email

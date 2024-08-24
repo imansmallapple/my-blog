@@ -2,6 +2,7 @@ from django import forms
 from django.contrib.auth.models import User
 from .models import UserProfile
 
+
 class LoginForm(forms.Form):
     username = forms.CharField(label='username', max_length=32,widget=forms.TextInput(attrs={
         'class': 'input', 'placeholder': 'Username/Email'
@@ -62,6 +63,15 @@ class ModifyPwdForm(forms.Form):
 
 
 class UserForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('email', )
+        widgets = {
+            'email': forms.EmailInput(attrs={'readonly': 'readonly'}),
+        }
+
+
+class PendingUserForm(forms.ModelForm):
     class Meta:
         model = User
         fields = ('email', )

@@ -4,7 +4,7 @@ from .forms import LoginForm, RegisterForm, ForgetPwdForm, ModifyPwdForm, UserFo
 from django.db.models import Q
 from django.contrib.auth.models import User
 from django.contrib.auth.backends import ModelBackend
-from .models import EmailVerifyRecord, UserProfile
+from .models import EmailVerifyRecord, UserProfile, PendingUser
 from utils.email_send import send_register_email
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
@@ -25,9 +25,21 @@ def active_user(request, active_code):
     if all_records:
         for record in all_records:
             email = record.email
-            user = User.objects.get(email=email)
-            user.is_active = True
-            user.save()
+
+            try:
+                pending_user = PendingUser.objects.get(email=email)
+            except PendingUser.DoesNotExist:
+                return HttpResponse('Invalid activation link.')
+
+            # 使用 PendingUser 中的加密密码创建实际用户
+            user = User.objects.create(
+                username=email,
+                email=email,
+                password=pending_user.password,  # 直接使用加密的密码
+                is_active=True
+            )
+            # 激活成功后删除 PendingUser 记录
+            pending_user.delete()
     else:
         return HttpResponse('link error')
     return redirect('/')
@@ -59,11 +71,19 @@ def register(request):
     else:
         form = RegisterForm(request.POST)
         if form.is_valid():
-            new_user = form.save(commit=False)
-            new_user.set_password(form.cleaned_data.get('password'))
-            new_user.username = form.cleaned_data.get('email')
-            new_user.is_active = False
-            new_user.save()
+            email = form.cleaned_data.get('email')
+            password = form.cleaned_data.get('password')
+
+            # 检查是否已经存在待激活用户
+            if PendingUser.objects.filter(email=email).exists():
+                return HttpResponse('This email is already pending for activation.')
+
+            # 创建 PendingUser 对象，并加密密码
+            pending_user = PendingUser(
+                email=email,
+                password=make_password(password)  # 使用 make_password 加密密码
+            )
+            pending_user.save()
 
             # send email
             send_register_email(form.cleaned_data.get('email'), 'register')
