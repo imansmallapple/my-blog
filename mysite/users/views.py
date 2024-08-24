@@ -22,26 +22,23 @@ class MyBackend(ModelBackend):
 
 def active_user(request, active_code):
     all_records = EmailVerifyRecord.objects.filter(code=active_code)
-    if all_records:
-        for record in all_records:
-            email = record.email
+    for record in all_records:
+        email = record.email
 
-            try:
-                pending_user = PendingUser.objects.get(email=email)
-            except PendingUser.DoesNotExist:
-                return HttpResponse('Invalid activation link.')
+        try:
+            pending_user = PendingUser.objects.get(email=email)
+        except PendingUser.DoesNotExist:
+            return HttpResponse('Invalid activation link.')
 
-            # 使用 PendingUser 中的加密密码创建实际用户
-            user = User.objects.create(
-                username=email,
-                email=email,
-                password=pending_user.password,  # 直接使用加密的密码
-                is_active=True
-            )
-            # 激活成功后删除 PendingUser 记录
-            pending_user.delete()
-    else:
-        return HttpResponse('link error')
+        # 使用 PendingUser 中的加密密码创建实际用户
+        user = User.objects.create(
+            username=email,
+            email=email,
+            password=pending_user.password,  # 直接使用加密的密码
+            is_active=True
+        )
+        # 激活成功后删除 PendingUser 记录
+        pending_user.delete()
     return redirect('/')
 
 
