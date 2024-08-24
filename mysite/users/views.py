@@ -67,8 +67,8 @@ def register(request):
 
             # send email
             send_register_email(form.cleaned_data.get('email'), 'register')
-
-            return HttpResponse("Registration succeed!")
+            context = {'form': form}
+            return render(request, 'users/activate_account.html', context)
 
     context = {'form': form}
     return render(request, 'users/register.html', context)
