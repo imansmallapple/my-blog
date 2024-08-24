@@ -14,4 +14,6 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('edit/', views.edit_users, name='edit'),
     path('activate_account/', views.register, name='activate_account'),
+    path('invalid_link/', views.active_user, name='invalid_link'),
+    path('pending_activation/', views.register, name='pending_activation'),
 ]

@@ -10,6 +10,7 @@ from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
 # Create your views here.
 
+
 class MyBackend(ModelBackend):
     def authenticate(self, request, username=None, password=None, **kwargs):
         try:
@@ -28,7 +29,7 @@ def active_user(request, active_code):
         try:
             pending_user = PendingUser.objects.get(email=email)
         except PendingUser.DoesNotExist:
-            return HttpResponse('Invalid activation link.')
+            return render(request, 'users/invalid_link.html')
 
         # 使用 PendingUser 中的加密密码创建实际用户
         user = User.objects.create(
@@ -73,7 +74,7 @@ def register(request):
 
             # 检查是否已经存在待激活用户
             if PendingUser.objects.filter(email=email).exists():
-                return HttpResponse('This email is already pending for activation.')
+                return render(request, 'users/pending_activation.html')
 
             # 创建 PendingUser 对象，并加密密码
             pending_user = PendingUser(
