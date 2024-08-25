@@ -10,6 +10,7 @@
     {% endblock %}
     </title>
     <link rel="stylesheet" href="{% static 'users/bulma.css' %}">
+    <link rel="stylesheet" href="{% static 'blog/style.css' %}">
 </head>
 <body>
 <nav class="navbar" role="navigation" aria-label="main navigation">
@@ -128,7 +129,7 @@
                 <a class="pagination-previous" href="?page={{ page_obj.previous_page_number }}">Previous</a>
                 {% endif %}
                 {% if page_obj.has_next %}
-                <a class="pagination-next" href="?page={{ page_obj.next_page_number }}">Next page</a>
+                <a class="pagination-next  text-blue" href="?page={{ page_obj.next_page_number }}">Next page</a>
                 {% endif %}
                 <ul class="pagination-list">
                     {% if page_obj.has_previous %}

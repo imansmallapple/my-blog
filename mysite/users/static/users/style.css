@@ -1,3 +1,7 @@
 html, body{
-    background-color: aliceblue;
+    background-image: url('https://w.wallhaven.cc/full/o5/wallhaven-o5qwl7.jpg');
+    background-size: cover; /* 使背景图片覆盖整个页面 */
+    background-position: center; /* 将背景图片居中显示 */
+    background-repeat: no-repeat; /* 防止背景图片重复 */
 }
+
