@@ -76,8 +76,8 @@
           {% if user.is_authenticated %}
           <div class="buttons">
               <span class="tag is-info is-medium" style="background-color: rgba(128, 128, 128, 0.3); color: #000;">Hi! {{request.user.username}}</span>
-              <a href="{% url 'users:user_profile' %}" class="button is-info">My Profile</a>
-              <a href="{% url 'users:logout' %}" class="button is-danger">Logout</a>
+              <a href="{% url 'users:user_profile' %}" class="button is-link is-outlined">My Profile</a>
+              <a href="{% url 'users:logout' %}" class="button is-danger is-outlined">Logout</a>
           </div>
           {% else %}
         <div class="buttons">
