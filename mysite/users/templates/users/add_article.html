@@ -5,5 +5,144 @@
 {% endblock %}
 
 {% block content %}
+<form action="{% url 'blog:add_article' %}" method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+        <div class="field is-horizontal" style="align-items: center;">
+              <div style="margin-right:10px;">
+                <label class="label">Author</label>
+              </div>
+              <div class="control has-icons-left has-icons-right">
+                <input class="input" type="text" style="width: 286px"
+                   value="{{ request.user.username }}" readonly>
+              </div>
+              <p class="help is-info">author is readonly</p>
+        </div>
 
+        <div class="field is-horizontal" style="align-items: center;">
+          <div style="margin-right:39.2px;">
+            <label class="label">Title</label>
+          </div>
+          <div class="control has-icons-left has-icons-right">
+            <input class="input" type="text" style="width: 286px"
+               placeholder="title"
+               name="{{ add_form.title.name }}"
+               value="{{ add_form.title.value|default_if_none:'' }}">
+            <span class="icon is-small is-left">
+            </span>
+          </div>
+        </div>
+
+        <div class="field is-horizontal" style="align-items: flex-start;">
+          <div style="margin-right:22.93px;">
+            <label class="label">Description</label>
+          </div>
+          <div class="control">
+            <textarea class="textarea" style="width: 572px"
+                       name="{{ add_form.description.name }}"
+                       placeholder="Briefly describe the article">
+                {{add_form.description.value|default_if_none:''}}
+            </textarea>
+          </div>
+        </div>
+
+        <div class="field is-horizontal" style="align-items: flex-start;">
+          <div style="margin-right:43.32px;">
+            <label class="label">Content</label>
+          </div>
+          <div class="control">
+             <textarea class="textarea" style="width: 572px"
+                       name="{{ add_form.content.name }}"
+                       placeholder="Article content">
+                {{add_form.content.value|default_if_none:''}}
+            </textarea>
+          </div>
+        </div>
+
+    <div class="field is-horizontal" style="align-items: flex-start;">
+        <div style="margin-right:61.4px;">
+            <label class="label">Tags</label>
+        </div>
+        <div class="control">
+            {{ add_form.tags }}
+        </div>
+    </div>
+
+
+<!--<script>-->
+<!--document.addEventListener('DOMContentLoaded', function() {-->
+<!--  let tags = [];  // 存储所有标签-->
+<!--  const tagInput = document.getElementById('tag-input');-->
+<!--  const tagContainer = document.getElementById('tag-container');-->
+<!--  const tagsHiddenInput = document.getElementById('tags-hidden');-->
+
+<!--  // 处理 Enter 键，添加标签-->
+<!--  tagInput.addEventListener('keypress', function(event) {-->
+<!--    if (event.key === 'Enter') {-->
+<!--      event.preventDefault();  // 防止表单提交-->
+<!--      const tag = tagInput.value.trim();-->
+
+<!--      if (tag && !tags.includes(tag)) {-->
+<!--        tags.push(tag);  // 添加标签到数组-->
+<!--        addTagToDOM(tag);  // 在页面上显示标签-->
+<!--        tagInput.value = '';  // 清空输入框-->
+<!--        updateHiddenInput();  // 更新隐藏的标签字段-->
+<!--      }-->
+<!--    }-->
+<!--  });-->
+
+<!--  // 将标签显示在界面上-->
+<!--  function addTagToDOM(tag) {-->
+<!--    const tagElement = document.createElement('span');-->
+<!--    tagElement.classList.add('tag', 'is-info', 'mr-2');-->
+<!--    tagElement.textContent = tag;-->
+
+<!--    // 添加删除标签的按钮-->
+<!--    const removeButton = document.createElement('button');-->
+<!--    removeButton.textContent = 'x';-->
+<!--    removeButton.classList.add('delete', 'is-small');-->
+<!--    removeButton.addEventListener('click', function() {-->
+<!--      removeTag(tag);-->
+<!--    });-->
+
+<!--    tagElement.appendChild(removeButton);-->
+<!--    tagContainer.insertBefore(tagElement, tagInput);  // 插入到输入框之前-->
+<!--  }-->
+
+<!--  // 从标签数组中删除标签-->
+<!--  function removeTag(tag) {-->
+<!--    tags = tags.filter(t => t !== tag);-->
+<!--    renderTags();  // 重新渲染标签-->
+<!--    updateHiddenInput();  // 更新隐藏字段-->
+<!--  }-->
+
+<!--  // 渲染所有标签-->
+<!--  function renderTags() {-->
+<!--    tagContainer.innerHTML = '';  // 清空现有的标签-->
+<!--    tags.forEach(addTagToDOM);-->
+<!--    tagContainer.appendChild(tagInput);  // 确保输入框保持在最后-->
+<!--  }-->
+
+<!--  // 更新隐藏的 input 字段，用于提交表单-->
+<!--  function updateHiddenInput() {-->
+<!--    tagsHiddenInput.value = tags.join(',');  // 用逗号分隔所有标签-->
+<!--  }-->
+<!--});-->
+<!--</script>-->
+
+
+          <div class="field is-horizontal" style="align-items: center;">
+          <div style="margin-right:53.82px;">
+            <label class="label">Category</label>
+          </div>
+          <div class="control">
+            <div class="select">
+              {{ add_form.category }}
+            </div>
+        </div>
+
+    <input class="button is-primary is-pulled-right" type="submit" name="publish" value="Publish">
+    <input class="button is-primary is-pulled-right" type="submit" name="save_as_draft" value="Save as Draft">
+      <div class=" is-clearfix"></div>
+    </div>
+  </form>
 {% endblock %}

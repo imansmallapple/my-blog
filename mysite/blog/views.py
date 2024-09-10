@@ -1,13 +1,16 @@
-from django.shortcuts import render, get_object_or_404
+from django.contrib.auth.decorators import login_required
+from django.shortcuts import render, get_object_or_404, redirect
 from .models import Category, Article, Tag
 from django.db.models import Q, F
 from datetime import datetime
 from django.core.paginator import Paginator
+from django.contrib.auth.models import User
+from .forms import AddForm
 
 
 def index(request):
-    article_list = Article.objects.all().order_by('-add_date')
-    paginator = Paginator(article_list, 2)
+    article_list = Article.objects.filter(is_draft=False).order_by('-add_date')
+    paginator = Paginator(article_list, 6)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
     context = {'page_obj': page_obj}
@@ -63,6 +66,52 @@ def archives(request, year, month):
     return render(request, 'blog/archives_list.html', context)
 
 
+@login_required(login_url='users:login')
 def add_article(request):
+    if request.method == "POST":
+        form = AddForm(request.POST, request.FILES)
+        if form.is_valid():
+            new_article = form.save(commit=False)
+            new_article.owner = request.user
 
-    return render(request, 'users/add_article.html')
+            # 判断用户点击了哪个按钮
+            if 'publish' in request.POST:
+                new_article.is_draft = False
+            elif 'save_as_draft' in request.POST:
+                new_article.is_draft = True
+
+            # 保存文章实例到数据库
+            new_article.save()
+
+            # 处理用户选择的标签
+            tags = form.cleaned_data.get('tags')
+            if tags:
+                # 由于文章已保存，now we can set tags safely
+                new_article.tags.set(tags)
+                new_article.save()
+
+            # 如果是草稿，则将草稿保存到 session
+            if new_article.is_draft:
+                request.session['draft_article'] = {
+                    'title': new_article.title,
+                    'description': new_article.description,
+                    'content': new_article.content,
+                    'tags': [tag.name for tag in new_article.tags.all()],
+                    'category': new_article.category.id
+                }
+                return redirect('blog:draft_list')  # 重定向到草稿列表页面
+            else:
+                return redirect('blog:index')  # 发布后重定向到文章列表页面
+
+        else:
+            print("Form is invalid:", form.errors)
+    else:
+        form = AddForm()
+
+    return render(request, 'users/add_article.html', {'add_form': form})
+
+
+@login_required(login_url='users:login')
+def draft_list(request):
+    drafts = request.session.get('draft_article', [])
+    return render(request, 'blog/draft_list.html', {'drafts': drafts})

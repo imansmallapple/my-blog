@@ -7,11 +7,17 @@ admin.site.register(SideBar)
 
 
 class ArticleAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'category', 'tags', 'owner', 'views', 'is_hot', 'mod_date', )
+    list_display = ('id', 'title', 'category', 'is_draft', 'owner', 'views', 'is_hot', 'mod_date', )
     list_filter = ('owner', )
     search_fields = ('title', 'description')
     list_editable = ('is_hot', )
     list_display_links = ('title', )
+
+    # 自定义方法，获取并显示文章的所有标签
+    def tags(self, obj):
+        return ', '.join([tag.name for tag in obj.tags.all()])  # 拼接所有标签的名字
+
+    tags.short_description = 'Tags'  # 设置列表显示时的列名
 
     class Media:
         css = {
