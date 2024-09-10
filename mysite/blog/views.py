@@ -61,3 +61,8 @@ def archives(request, year, month):
     month_name = datetime(year=int(year), month=int(month), day=1).strftime('%B')
     context = {'page_obj': page_obj, 'article_list': article_list, 'year': year, 'month': month_name}
     return render(request, 'blog/archives_list.html', context)
+
+
+def add_article(request):
+
+    return render(request, 'users/add_article.html')

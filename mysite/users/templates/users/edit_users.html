@@ -1,39 +1,130 @@
 {% extends 'users/user_profile.html' %}
 
 {% block title %}
-<li class="is-active"><a>Edit User</a></li>
+    <li class="is-active"><a>Edit User</a></li>
 {% endblock %}
 
 {% block content %}
 <form action="{% url 'users:edit' %}" method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    <div class="field is-horizontal">
-        <div class="field-label is-normal">
-          <label for="{{ form.email.id_for_label }}" class="label">{{ form.email.label }}</label>
-        </div>
-        <div class="field-body">
-          <div class="field">
-            <div class="control">
-                {{ form.email }}
-            </div>
+    <div class="field is-horizontal" style="align-items: center;">
+          <div style="margin-right:10px;">
+            <label class="label">{{ form.email.label }}</label>
           </div>
-        </div>
+          <div class="control has-icons-left has-icons-right">
+            <input class="input" type="text" style="width: 286px"
+               value="{{ form.email.value }}" readonly>
+            <span class="icon is-small is-left">
+              <i class="fas fa-envelope"></i>
+            </span>
+          </div>
+          <p class="help is-info">Email address is readonly</p>
     </div>
-      {% for field in user_profile_form %}
-      <div class="field is-horizontal">
-          <div class="field-label is-normal">
-            <label for="{{ field.id_for_label }}" class="label">{{ field.label }}</label>
+
+        <div class="field is-horizontal" style="align-items: center;">
+          <div style="margin-right:39.2px;">
+            <label class="label">Username</label>
           </div>
-          <div class="field-body">
-            <div class="field">
-              <div class="control">
-                 {{ field }}
-              </div>
+          <div class="control has-icons-left has-icons-right">
+            <input class="input" type="text" style="width: 286px"
+               placeholder="e.g Alex Smith"
+               name="{{ user_profile_form.nick_name.name }}"
+               value="{{ user_profile_form.nick_name.value }}">
+            <span class="icon is-small is-left">
+              <i class="fas fa-user"></i>
+            </span>
+            <span class="icon is-small is-right">
+              <i class="fas fa-check"></i>
+            </span>
+          </div>
+          <p class="help is-success">This username is available</p>
+        </div>
+
+        <div class="field is-horizontal" style="align-items: flex-start;">
+          <div style="margin-right:22.93px;">
+            <label class="label">Introduction</label>
+          </div>
+          <div class="control">
+            <textarea class="textarea" style="width: 572px"
+                       name="{{ user_profile_form.description.name }}"
+                       placeholder="Briefly introduce yourself~">
+                {{user_profile_form.description.value}}
+            </textarea>
+          </div>
+        </div>
+        <div class="field is-horizontal" style="align-items: center;">
+          <div style="margin-right:43.32px;">
+            <label class="label">Signature</label>
+          </div>
+          <div class="control">
+            <input class="input" type="text" placeholder="e.g. I love my life" style="width: 572px"
+                   name="{{ user_profile_form.signature.name }}"
+                   value="{{ user_profile_form.signature.value }}">
+          </div>
+        </div>
+        <div class="field is-horizontal" style="align-items: center;">
+          <div style="margin-right:52.58px;">
+            <label class="label">Birthday</label>
+          </div>
+          <div class="control">
+            <input class="input" type="date"
+                   name="{{ user_profile_form.birthday.name }}"
+                   value="{{ user_profile_form.birthday.value|date:'Y-m-d' }}">
+          </div>
+        </div>
+          <div class="field is-horizontal" style="align-items: center;">
+          <div style="margin-right:61.4px;">
+            <label class="label">Gender</label>
+          </div>
+            <div class="select">
+              {{ user_profile_form.gender }}
             </div>
+        </div>
+          <div class="field is-horizontal" style="align-items: center;">
+          <div style="margin-right:53.82px;">
+            <label class="label">Address</label>
           </div>
-      </div>
-      {% endfor %}
-      <input class=" button is-primary is-pulled-right" type="submit" value="Save">
+          <div class="control">
+            <input class="input" type="text" placeholder="e.g. Filtrowa 64/41, Warsaw Poland" style="width: 572px"
+                   name="{{ user_profile_form.address.name }}"
+                   value="{{ user_profile_form.address.value }}">
+          </div>
+        </div>
+
+        <div class="field is-horizontal" style="align-items: center;">
+          <div style="margin-right:68.04px;">
+            <label class="label">Avatar</label>
+          </div>
+          <div class="file has-name is-fullwidth">
+            <label class="file-label">
+              <input class="file-input" type="file" name="{{ user_profile_form.image.name }}" id="file-input" />
+              <span class="file-cta">
+                <span class="file-icon">
+                  <i class="fas fa-upload"></i>
+                </span>
+                <span class="file-label">Choose a file…</span>
+              </span>
+              <span class="file-name" id="file-name">No file chosen</span>
+            </label>
+          </div>
+        </div>
+
+<!-- JavaScript to update the file name -->
+<script>
+  document.getElementById('file-input').addEventListener('change', function() {
+    const fileInput = document.getElementById('file-input');
+    const fileName = document.getElementById('file-name');
+
+    if (fileInput.files.length > 0) {
+      fileName.textContent = fileInput.files[0].name;  // Update with the selected file name
+    } else {
+      fileName.textContent = 'No file chosen';  // Default text when no file is selected
+    }
+  });
+</script>
+
+
+    <input class=" button is-primary is-pulled-right" type="submit" value="Save">
       <div class=" is-clearfix"></div>
 
   </form>
