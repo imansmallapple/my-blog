@@ -1,5 +1,8 @@
 from django.contrib.auth.decorators import login_required
+from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
+from django.urls import reverse
+
 from .models import Category, Article, Tag
 from django.db.models import Q, F
 from datetime import datetime
@@ -15,6 +18,9 @@ def index(request):
     page_obj = paginator.get_page(page_number)
     context = {'page_obj': page_obj}
     return render(request, 'blog/index.html', context)
+
+def indeex(request):
+    return render(request, 'blog/indeex.html')
 
 
 def category_list(request, category_id):
@@ -99,12 +105,15 @@ def add_article(request):
                     'tags': [tag.name for tag in new_article.tags.all()],
                     'category': new_article.category.id
                 }
-                return redirect('blog:draft_list')  # 重定向到草稿列表页面
+                # 使用 reverse 函数获取 URL
+                redirect_url = reverse('blog:draft_list')
             else:
-                return redirect('blog:index')  # 发布后重定向到文章列表页面
+                redirect_url = reverse('blog:index')
+            return JsonResponse({'success': True, 'redirect': redirect_url})
 
         else:
-            print("Form is invalid:", form.errors)
+            # Return form errors as JSON
+            return JsonResponse({'success': False, 'errors': form.errors}, status=400)
     else:
         form = AddForm()
 

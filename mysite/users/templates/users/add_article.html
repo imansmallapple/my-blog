@@ -1,80 +1,110 @@
 {% extends 'users/user_profile.html' %}
 {% load static %}
 {% block title %}
-    <li class="is-active"><a>New Article</a></li>
-    <link rel="stylesheet" href="{% static 'ckeditor5/cked.css' %}">
-    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.js"></script>
-    <script src="{% static 'ckeditor5/ckeditor.js' %}"></script>
-    <script src="{% static 'ckeditor5/config.js' %}"></script>
-    <script src="{% static 'ckeditor5/translations/zh.js' %}"></script>
-    <style>
-        /* 在 HTML 文件的 <style> 标签中添加 CSS */
-        .ck-editor__editable {
-            height: 500px !important; /* 设置高度 */
-            width: 100% !important; /* 设置宽度 */
-            box-sizing: border-box; /* 包括边框和内边距 */
-        }
-        .ck-toolbar {
-            height: 50px !important; /* 设置高度 */
-            width: 900px !important; /* 设置宽度 */
-            box-sizing: border-box; /* 包括边框和内边距 */
-        }
-    </style>
+<li class="is-active"><a>New Article</a></li>
+<input type="hidden" name="csrfmiddlewaretoken" value="{{ csrf_token }}">
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<link rel="stylesheet" href="https://cdn.ckeditor.com/ckeditor5/43.1.0/ckeditor5.css">
+<style>
+    /* 在 HTML 文件的 <style> 标签中添加 CSS */
+    .ck-editor__editable {
+        height: 946.92px !important;
+        /* 设置高度 */
+        width: 795px !important;
+        /* 设置宽度 */
+        box-sizing: border-box;
+        /* 包括边框和内边距 */
+    }
+
+    .ck-toolbar {
+        height: 40px !important;
+        /* 设置高度 */
+        width: 793px !important;
+        /* 设置宽度 */
+        box-sizing: border-box;
+        /* 包括边框和内边距 */
+    }
+    /* 确保有序列表的数字和文本在同一行显示 */
+    .ck-editor__editable ol {
+        margin-left: 0; /* 去掉左边距 */
+        padding-left: 30px; /* 添加内边距，确保数字和文本之间的距离 */
+        line-height: 1.6; /* 设置行高，确保内容不会换行 */
+    }
+    /* 确保无序列表的圆点和文本在同一行显示 */
+    .ck-editor__editable ul {
+        margin-left: 0; /* 去掉左边距 */
+        padding-left: 30px; /* 添加内边距，确保圆点和文本之间的距离 */
+        line-height: 1.6; /* 设置行高，确保内容不会换行 */
+    }
+</style>
 {% endblock %}
 
 {% block content %}
-<form action="{% url 'blog:add_article' %}" method="post" enctype="multipart/form-data">
+<form action="{% url 'blog:add_article' %}" method="post" id="article-form" enctype="multipart/form-data">
     {% csrf_token %}
-        <div class="field is-horizontal" style="align-items: center;">
-              <div style="margin-right:58.99px;">
-                <label class="label">Author</label>
-              </div>
-              <div class="control has-icons-left has-icons-right">
-                <input class="input" type="text" style="width: 286px"
-                   value="{{ request.user.username }}" readonly>
-              </div>
-              <p class="help is-info">author is readonly</p>
+    <div class="field is-horizontal" style="align-items: center;">
+        <div style="margin-right:58.99px;">
+            <label class="label">Author</label>
         </div>
+        <div class="control has-icons-left has-icons-right">
+            <input class="input" type="text" style="width: 286px" value="{{ request.user.username }}" readonly>
+        </div>
+        <p class="help is-info">author is readonly</p>
+    </div>
 
-        <div class="field is-horizontal" style="align-items: center;">
-          <div style="margin-right:78.3px;">
+    <div class="field is-horizontal" style="align-items: center;">
+        <div style="margin-right:78.3px;">
             <label class="label">Title</label>
-          </div>
-          <div class="control has-icons-left has-icons-right">
-            <input class="input" type="text" style="width: 572px"
-               placeholder="title"
-               name="{{ add_form.title.name }}"
-               value="{{ add_form.title.value|default_if_none:'' }}">
+        </div>
+        <div class="control has-icons-left has-icons-right">
+            <input class="input" type="text" style="width: 572px" placeholder="title" name="{{ add_form.title.name }}" id="id_title"
+                value="{{ add_form.title.value|default_if_none:'' }}">
             <span class="icon is-small is-left">
             </span>
-          </div>
         </div>
+    </div>
 
-        <div class="field is-horizontal" style="align-items: flex-start;">
-          <div style="margin-right:22.93px;">
+    <div class="field is-horizontal" style="align-items: flex-start;">
+        <div style="margin-right:22.93px;">
             <label class="label">Description</label>
-          </div>
-          <div class="control">
-            <textarea class="textarea" style="width: 572px"
-                       name="{{ add_form.description.name }}"
-                       placeholder="Briefly describe the article">
+        </div>
+        <div class="control">
+            <textarea class="textarea" style="width: 572px" name="{{ add_form.description.name }}"  id="id_description"
+                placeholder="Briefly describe the article">
                 {{add_form.description.value|default_if_none:''}}
             </textarea>
-          </div>
         </div>
+    </div>
 
-        <div class="field is-horizontal" style="align-items: flex-start;">
-          <div style="margin-right:50px;">
-            <label class="label">Content</label>
-          </div>
-          <div class="control">
-             <textarea class="textarea ck-editor__editable ck-toolbar" style="width: 572px" id="id_content"
-                       name="{{ add_form.content.name }}"
-                       placeholder="Article content">
-                {{add_form.content.value|default_if_none:''}}
-            </textarea>
-          </div>
+<div class="field is-horizontal" style="align-items: flex-start;">
+    <div style="margin-right:50px;">
+        <label class="label">Content</label>
+    </div>
+    <div class="control">
+        <div class="main-container">
+            <div class="editor-container editor-container_classic-editor" id="editor-container">
+                <div class="editor-container__editor">
+                    <div id="editor" data-initial-data="{{ add_form.content.value|default_if_none:'' }}">
+                        <!-- CKEditor 将初始化在这个 div 中 -->
+                    </div>
+                </div>
+            </div>
         </div>
+        <!-- 隐藏的 textarea，CKEditor 将同步数据到这里 -->
+<!--        <textarea class="textarea" style="display: none;" id="id_content" name="{{ add_form.content.name }}" placeholder="Article content">-->
+<!--            {{ add_form.content.value|default_if_none:'' }}-->
+<!--        </textarea>-->
+    </div>
+</div>
+
+
+
+
+
+
+
+
+    </div>
 
     <div class="field is-horizontal" style="align-items: flex-start;">
         <div style="margin-right:75.74px;">
@@ -85,83 +115,36 @@
         </div>
     </div>
 
-
-<!--<script>-->
-<!--document.addEventListener('DOMContentLoaded', function() {-->
-<!--  let tags = [];  // 存储所有标签-->
-<!--  const tagInput = document.getElementById('tag-input');-->
-<!--  const tagContainer = document.getElementById('tag-container');-->
-<!--  const tagsHiddenInput = document.getElementById('tags-hidden');-->
-
-<!--  // 处理 Enter 键，添加标签-->
-<!--  tagInput.addEventListener('keypress', function(event) {-->
-<!--    if (event.key === 'Enter') {-->
-<!--      event.preventDefault();  // 防止表单提交-->
-<!--      const tag = tagInput.value.trim();-->
-
-<!--      if (tag && !tags.includes(tag)) {-->
-<!--        tags.push(tag);  // 添加标签到数组-->
-<!--        addTagToDOM(tag);  // 在页面上显示标签-->
-<!--        tagInput.value = '';  // 清空输入框-->
-<!--        updateHiddenInput();  // 更新隐藏的标签字段-->
-<!--      }-->
-<!--    }-->
-<!--  });-->
-
-<!--  // 将标签显示在界面上-->
-<!--  function addTagToDOM(tag) {-->
-<!--    const tagElement = document.createElement('span');-->
-<!--    tagElement.classList.add('tag', 'is-info', 'mr-2');-->
-<!--    tagElement.textContent = tag;-->
-
-<!--    // 添加删除标签的按钮-->
-<!--    const removeButton = document.createElement('button');-->
-<!--    removeButton.textContent = 'x';-->
-<!--    removeButton.classList.add('delete', 'is-small');-->
-<!--    removeButton.addEventListener('click', function() {-->
-<!--      removeTag(tag);-->
-<!--    });-->
-
-<!--    tagElement.appendChild(removeButton);-->
-<!--    tagContainer.insertBefore(tagElement, tagInput);  // 插入到输入框之前-->
-<!--  }-->
-
-<!--  // 从标签数组中删除标签-->
-<!--  function removeTag(tag) {-->
-<!--    tags = tags.filter(t => t !== tag);-->
-<!--    renderTags();  // 重新渲染标签-->
-<!--    updateHiddenInput();  // 更新隐藏字段-->
-<!--  }-->
-
-<!--  // 渲染所有标签-->
-<!--  function renderTags() {-->
-<!--    tagContainer.innerHTML = '';  // 清空现有的标签-->
-<!--    tags.forEach(addTagToDOM);-->
-<!--    tagContainer.appendChild(tagInput);  // 确保输入框保持在最后-->
-<!--  }-->
-
-<!--  // 更新隐藏的 input 字段，用于提交表单-->
-<!--  function updateHiddenInput() {-->
-<!--    tagsHiddenInput.value = tags.join(',');  // 用逗号分隔所有标签-->
-<!--  }-->
-<!--});-->
-<!--</script>-->
-
-
-          <div class="field is-horizontal" style="align-items: center;">
-          <div style="margin-right:40.5px;">
+    <div class="field is-horizontal" style="align-items: center;">
+        <div style="margin-right:40.5px;">
             <label class="label">Category</label>
-          </div>
-          <div class="control">
+        </div>
+        <div class="control">
             <div class="select">
-              {{ add_form.category }}
+                {{ add_form.category }}
             </div>
         </div>
-          </div>
-            <div class="button-container" style="padding-left:113.66px;">
-                <input class="button is-info" type="submit" name="publish" value="Publish">
-                <input class="button is-primary" type="submit" name="save_as_draft" value="Save as Draft">
-            </div>
-      <div class="is-clearfix"></div>
-  </form>
+    </div>
+
+
+    <script type="importmap">
+		{
+			"imports": {
+				"ckeditor5": "https://cdn.ckeditor.com/ckeditor5/43.1.0/ckeditor5.js",
+				"ckeditor5/": "https://cdn.ckeditor.com/ckeditor5/43.1.0/"
+			}
+		}
+		</script>
+    <script src="https://cdn.ckbox.io/ckbox/latest/ckbox.js"></script>
+    <script type="module" src="{% static 'js/main.js' %}"></script>
+
+
+
+
+    <div class="button-container" style="padding-left:113.66px;">
+        <input class="button is-info" type="submit" name="publish" value="Publish">
+        <input class="button is-primary" type="submit" name="save_as_draft" value="Save as Draft">
+    </div>
+    <div class="is-clearfix"></div>
+</form>
 {% endblock %}
