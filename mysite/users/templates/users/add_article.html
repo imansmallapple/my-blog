@@ -42,7 +42,6 @@
 
 {% block content %}
 <form action="{% url 'blog:add_article' %}" method="post" id="article-form" enctype="multipart/form-data">
-    {% csrf_token %}
     <div class="field is-horizontal" style="align-items: center;">
         <div style="margin-right:58.99px;">
             <label class="label">Author</label>

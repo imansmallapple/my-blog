@@ -19,9 +19,6 @@ def index(request):
     context = {'page_obj': page_obj}
     return render(request, 'blog/index.html', context)
 
-def indeex(request):
-    return render(request, 'blog/indeex.html')
-
 
 def category_list(request, category_id):
     category = get_object_or_404(Category, id=category_id)
