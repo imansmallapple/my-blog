@@ -8,9 +8,9 @@
 <style>
     /* 在 HTML 文件的 <style> 标签中添加 CSS */
     .ck-editor__editable {
-        height: 946.92px !important;
+        height: 500px !important;
         /* 设置高度 */
-        width: 795px !important;
+        width:  955px !important;
         /* 设置宽度 */
         box-sizing: border-box;
         /* 包括边框和内边距 */
@@ -18,12 +18,13 @@
 
     .ck-toolbar {
         height: 40px !important;
-        /* 设置高度 */
-        width: 793px !important;
-        /* 设置宽度 */
+        width: 954px !important; /* 确保工具栏宽度足够 */
         box-sizing: border-box;
-        /* 包括边框和内边距 */
+        border: 1px solid var(--ck-color-toolbar-border) !important;
+        padding: 0 var(--ck-spacing-small) !important;
     }
+
+
     /* 确保有序列表的数字和文本在同一行显示 */
     .ck-editor__editable ol {
         margin-left: 0; /* 去掉左边距 */
@@ -76,34 +77,21 @@
         </div>
     </div>
 
-<div class="field is-horizontal" style="align-items: flex-start;">
-    <div style="margin-right:50px;">
-        <label class="label">Content</label>
-    </div>
-    <div class="control">
-        <div class="main-container">
-            <div class="editor-container editor-container_classic-editor" id="editor-container">
-                <div class="editor-container__editor">
-                    <div id="editor" data-initial-data="{{ add_form.content.value|default_if_none:'' }}">
-                        <!-- CKEditor 将初始化在这个 div 中 -->
+    <div class="field is-horizontal" style="align-items: flex-start;">
+        <div style="margin-right:50px;">
+            <label class="label">Content</label>
+        </div>
+        <div class="control">
+            <div class="main-container">
+                <div class="editor-container editor-container_classic-editor" id="editor-container">
+                    <div class="editor-container__editor">
+                        <div id="editor" data-initial-data="{{ add_form.content.value|default_if_none:'' }}">
+                            <!-- CKEditor 将初始化在这个 div 中 -->
+                        </div>
                     </div>
                 </div>
             </div>
         </div>
-        <!-- 隐藏的 textarea，CKEditor 将同步数据到这里 -->
-<!--        <textarea class="textarea" style="display: none;" id="id_content" name="{{ add_form.content.name }}" placeholder="Article content">-->
-<!--            {{ add_form.content.value|default_if_none:'' }}-->
-<!--        </textarea>-->
-    </div>
-</div>
-
-
-
-
-
-
-
-
     </div>
 
     <div class="field is-horizontal" style="align-items: flex-start;">
@@ -126,7 +114,6 @@
         </div>
     </div>
 
-
     <script type="importmap">
 		{
 			"imports": {
@@ -138,12 +125,9 @@
     <script src="https://cdn.ckbox.io/ckbox/latest/ckbox.js"></script>
     <script type="module" src="{% static 'js/main.js' %}"></script>
 
-
-
-
-    <div class="button-container" style="padding-left:113.66px;">
-        <input class="button is-info" type="submit" name="publish" value="Publish">
-        <input class="button is-primary" type="submit" name="save_as_draft" value="Save as Draft">
+    <div class="button-container" style="">
+        <input class="button is-primary" type="submit" name="save_as_draft" value="Save as Draft" style="margin-right: 755px;">
+        <input class="button is-info" type="submit" name="publish" value="Publish" style="margin-right: 5px;">
     </div>
     <div class="is-clearfix"></div>
 </form>
