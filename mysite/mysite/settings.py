@@ -141,4 +141,4 @@ EMAIL_HOST_PASSWORD = 'pvsqkjhcnonopezo'
 EMAIL_PORT = 465
 EMAIL_USE_SSL = True
 # 后期维护把console改成smtp 经过测试可以实际发送到私人邮箱
-EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

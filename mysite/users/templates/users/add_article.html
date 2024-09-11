@@ -1,14 +1,32 @@
 {% extends 'users/user_profile.html' %}
-
+{% load static %}
 {% block title %}
     <li class="is-active"><a>New Article</a></li>
+    <link rel="stylesheet" href="{% static 'ckeditor5/cked.css' %}">
+    <script src="https://cdn.bootcdn.net/ajax/libs/jquery/3.7.1/jquery.js"></script>
+    <script src="{% static 'ckeditor5/ckeditor.js' %}"></script>
+    <script src="{% static 'ckeditor5/config.js' %}"></script>
+    <script src="{% static 'ckeditor5/translations/zh.js' %}"></script>
+    <style>
+        /* 在 HTML 文件的 <style> 标签中添加 CSS */
+        .ck-editor__editable {
+            height: 500px !important; /* 设置高度 */
+            width: 100% !important; /* 设置宽度 */
+            box-sizing: border-box; /* 包括边框和内边距 */
+        }
+        .ck-toolbar {
+            height: 50px !important; /* 设置高度 */
+            width: 900px !important; /* 设置宽度 */
+            box-sizing: border-box; /* 包括边框和内边距 */
+        }
+    </style>
 {% endblock %}
 
 {% block content %}
 <form action="{% url 'blog:add_article' %}" method="post" enctype="multipart/form-data">
     {% csrf_token %}
         <div class="field is-horizontal" style="align-items: center;">
-              <div style="margin-right:10px;">
+              <div style="margin-right:58.99px;">
                 <label class="label">Author</label>
               </div>
               <div class="control has-icons-left has-icons-right">
@@ -19,11 +37,11 @@
         </div>
 
         <div class="field is-horizontal" style="align-items: center;">
-          <div style="margin-right:39.2px;">
+          <div style="margin-right:78.3px;">
             <label class="label">Title</label>
           </div>
           <div class="control has-icons-left has-icons-right">
-            <input class="input" type="text" style="width: 286px"
+            <input class="input" type="text" style="width: 572px"
                placeholder="title"
                name="{{ add_form.title.name }}"
                value="{{ add_form.title.value|default_if_none:'' }}">
@@ -46,11 +64,11 @@
         </div>
 
         <div class="field is-horizontal" style="align-items: flex-start;">
-          <div style="margin-right:43.32px;">
+          <div style="margin-right:50px;">
             <label class="label">Content</label>
           </div>
           <div class="control">
-             <textarea class="textarea" style="width: 572px"
+             <textarea class="textarea ck-editor__editable ck-toolbar" style="width: 572px" id="id_content"
                        name="{{ add_form.content.name }}"
                        placeholder="Article content">
                 {{add_form.content.value|default_if_none:''}}
@@ -59,7 +77,7 @@
         </div>
 
     <div class="field is-horizontal" style="align-items: flex-start;">
-        <div style="margin-right:61.4px;">
+        <div style="margin-right:75.74px;">
             <label class="label">Tags</label>
         </div>
         <div class="control">
@@ -131,7 +149,7 @@
 
 
           <div class="field is-horizontal" style="align-items: center;">
-          <div style="margin-right:53.82px;">
+          <div style="margin-right:40.5px;">
             <label class="label">Category</label>
           </div>
           <div class="control">
@@ -139,10 +157,11 @@
               {{ add_form.category }}
             </div>
         </div>
-
-    <input class="button is-primary is-pulled-right" type="submit" name="publish" value="Publish">
-    <input class="button is-primary is-pulled-right" type="submit" name="save_as_draft" value="Save as Draft">
-      <div class=" is-clearfix"></div>
-    </div>
+          </div>
+            <div class="button-container" style="padding-left:113.66px;">
+                <input class="button is-info" type="submit" name="publish" value="Publish">
+                <input class="button is-primary" type="submit" name="save_as_draft" value="Save as Draft">
+            </div>
+      <div class="is-clearfix"></div>
   </form>
 {% endblock %}

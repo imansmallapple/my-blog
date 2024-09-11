@@ -5,3 +5,9 @@ html, body{
     background-repeat: no-repeat; /* 防止背景图片重复 */
 }
 
+.button-container {
+    display: flex; /* 使用 Flexbox 布局 */
+    justify-content: flex-end; /* 将按钮对齐到右侧 */
+    gap: 100px; /* 添加按钮之间的间隔 */
+}
+

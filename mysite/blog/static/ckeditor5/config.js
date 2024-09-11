@@ -64,10 +64,6 @@ $(document).ready(function () {
         })
         .then(editor => {
             window.editor = editor;
-
-
-
-
         })
         .catch(error => {
             console.error('Oops, something went wrong!');
