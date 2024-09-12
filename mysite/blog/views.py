@@ -76,7 +76,7 @@ def add_article(request):
         if form.is_valid():
             new_article = form.save(commit=False)
             new_article.owner = request.user
-            print(request.POST)
+            # print(request.POST)
 
             # 判断用户点击了哪个按钮
             if 'publish' in request.POST:
