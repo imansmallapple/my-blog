@@ -8,7 +8,7 @@ from django.db.models import Q, F
 from datetime import datetime
 from django.core.paginator import Paginator
 from django.contrib.auth.models import User
-from .forms import AddForm
+from .forms import AddForm, ArticleForm
 
 
 def index(request):
@@ -118,6 +118,39 @@ def add_article(request):
 
 
 @login_required(login_url='users:login')
+def edit_article(request, article_id):
+    # 获取用户当前想要编辑的文章
+    article = get_object_or_404(Article, id=article_id, owner=request.user)
+
+    if request.method == 'POST':
+        # POST 请求意味着表单被提交
+        form = ArticleForm(request.POST, request.FILES, instance=article)
+        if form.is_valid():
+            form.save()  # 保存表单，并更新文章
+            return JsonResponse({'success': True, 'redirect': reverse('blog:index')})  # JSON 响应，用于前端处理
+        else:
+            return JsonResponse({'success': False, 'errors': form.errors})  # 如果有错误，返回错误信息
+    else:
+        # 如果是 GET 请求，渲染表单，传递当前文章的内容
+        form = ArticleForm(instance=article)
+
+    context = {'add_form': form, 'article': article}
+    return render(request, 'users/edit_article.html', context)
+
+
+
+@login_required(login_url='users:login')
+def published_articles(request):
+    user = User.objects.get(id=request.user.id)
+    article_list = Article.objects.filter(owner=user, is_draft=False).order_by('-add_date')
+    paginator = Paginator(article_list, 6)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context = {'page_obj': page_obj}
+    return render(request, 'users/published_articles.html', context)
+
+
+@login_required(login_url='users:login')
 def draft_list(request):
     drafts = request.session.get('draft_article', [])
-    return render(request, 'blog/draft_list.html', {'drafts': drafts})
+    return render(request, 'users/draft_list.html', {'drafts': drafts})

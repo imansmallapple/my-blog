@@ -113,8 +113,8 @@
                             <div class="card-content menu">
                                 <ul class="content menu-list">
                                     <li><a href="{% url 'blog:add_article' %}">Add Blog</a></li>
-                                    <li><a href="">Published Blog</a></li>
-                                    <li><a href="">Draft Box</a></li>
+                                    <li><a href="{% url 'blog:published_articles' %}">Published Blog</a></li>
+                                    <li><a href="{% url 'blog:draft_list' %}">Draft Box</a></li>
                                     <li><a href="">Comments</a></li>
                                     <li><a href="">Data Analysis</a></li>
                                 </ul>

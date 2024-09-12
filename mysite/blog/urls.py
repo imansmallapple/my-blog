@@ -10,5 +10,7 @@ urlpatterns = [
     path('search/', views.search, name='search'),
     path('archives/<int:year>/<int:month>/', views.archives, name='archives'),
     path('add_article/', views.add_article, name='add_article'),
+    path('published_articles/', views.published_articles, name='published_articles'),
+    path('edit_article/<int:article_id>/', views.edit_article, name='edit_article'),
     path('drafts/', views.draft_list, name='draft_list'),
 ]
