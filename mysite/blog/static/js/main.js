@@ -242,6 +242,7 @@ ClassicEditor.create(document.querySelector('#editor'), editorConfig)
             event.preventDefault();  // Prevent default form submission
 
             const buttonName = event.submitter ? event.submitter.name : 'add';  // Get the name of the clicked button
+            const buttonValue = event.submitter ? event.submitter.value : '';
             const articleIdInput = document.querySelector('#article-id');
             const articleId = articleIdInput ? articleIdInput.value : '';
             const isUpdate = buttonName === 'update';
@@ -258,7 +259,8 @@ ClassicEditor.create(document.querySelector('#editor'), editorConfig)
 
             const formData = new FormData(document.querySelector('#article-form'));
             formData.append('content', editorData);
-
+            // 手动添加按钮的 name 和 value 到 FormData 中
+            formData.append(buttonName, buttonValue);  // 这里添加按钮的 name 和 value
             fetch(url, {
                 method: 'POST',
                 body: formData,
@@ -274,12 +276,19 @@ ClassicEditor.create(document.querySelector('#editor'), editorConfig)
             .then(result => {
                 console.log('Server Response:', result);
                 if (result.success) {
-                    alert(isUpdate ? 'Article updated successfully!' : 'Article added successfully!');
-                    console.log('Redirecting to:', result.redirect);  // Debugging line
+                    if(buttonName === 'publish'){
+                    alert('Article published successfully!');
+                    }
+                    else if(buttonName === 'save_as_draft'){
+                    alert('Article saved as draft successfully!');
+                    }
+                    else if(buttonName === 'update'){
+                    alert('Article updated successfully!');
+                    }
                     window.location.href = result.redirect;
                 } else {
-                    alert( result.errors);
-                    console.error('Errors:', result.errors);  // Print errors if available
+                    const errorMessages = Object.values(result.errors).flat().join('\n');
+                    alert('Errors:\n' + errorMessages);
                 }
             })
             .catch(error => {

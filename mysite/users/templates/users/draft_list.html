@@ -5,5 +5,77 @@
 {% endblock %}
 
 {% block content %}
-dudu
+    <style>
+        .button-container {
+            display: flex; /* 使用 Flexbox 布局 */
+            gap: 10px; /* 设置按钮之间的间距 */
+        }
+
+        .button-container .button {
+            margin: 0; /* 去掉按钮的默认外边距 */
+        }
+    </style>
+
+    <div class="messages">
+        {% if messages %}
+            {% for message in messages %}
+                <div class="message">{{ message }}</div>
+            {% endfor %}
+        {% endif %}
+    </div>
+
+    {% if page_obj.object_list %}
+        <ul>
+            {% for article in page_obj.object_list %}
+            <li>
+                <div class="box" style="margin-bottom: 10px">
+                    <div class="content-container" style="display: flex; justify-content: space-between; align-items: center;">
+                        <!-- 左侧的文章信息 -->
+                        <div class="article-info">
+                            <h1 class="is-size-5 has-text-weight-bold">
+                                <a href="{% url 'blog:article_detail' article.id %}">{{ article.title }}</a>
+                            </h1>
+                            <div class="is-size-7 has-text-grey-light">
+                                <span class="mr-6">Author: {{ article.owner }}</span>
+                                <span>Publish Date: {{ article.add_date }}</span>
+                            </div>
+                            <p>{{ article.description|truncatechars:100 }}</p>
+                        </div>
+
+                        <!-- 右侧的按钮，点击后跳转到 edit_article 页面并传递文章ID -->
+                        <div class="button-container">
+                            <a href="{% url 'blog:edit_article' article.id %}" class="button is-link is-outlined">Edit</a>
+                            <a href="{% url 'blog:delete_article' article.id %}" class="button is-danger is-outlined">Delete</a>
+                        </div>
+                    </div>
+                </div>
+            </li>
+            {% endfor %}
+        </ul>
+
+        <!-- Pagination -->
+        <nav class="pagination is-centered" role="navigation" aria-label="pagination">
+            {% if page_obj.has_previous %}
+                <a class="pagination-previous" href="?page={{ page_obj.previous_page_number }}">Previous</a>
+            {% endif %}
+
+            {% if page_obj.has_next %}
+                <a class="pagination-next" href="?page={{ page_obj.next_page_number }}">Next page</a>
+            {% endif %}
+
+            <ul class="pagination-list">
+                {% for num in page_obj.paginator.page_range %}
+                    {% if page_obj.number == num %}
+                        <li><a class="pagination-link is-current" aria-current="page">{{ num }}</a></li>
+                    {% elif num > page_obj.number|add:'-3' and num < page_obj.number|add:'3' %}
+                        <li><a class="pagination-link" href="?page={{ num }}">{{ num }}</a></li>
+                    {% endif %}
+                {% endfor %}
+            </ul>
+        </nav>
+
+    {% else %}
+        <p>You don't have any draft.</p>
+    {% endif %}
+
 {% endblock %}

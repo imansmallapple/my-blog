@@ -44,6 +44,4 @@ class ArticleForm(forms.ModelForm):
 
     def clean_content(self):
         content = self.cleaned_data.get('content')
-        if len(content) < 20:
-            raise ValidationError('Content is too short. It must be at least 20 characters long.')
         return content

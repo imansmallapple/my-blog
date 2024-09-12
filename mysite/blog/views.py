@@ -2,7 +2,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
-
+from django.contrib import messages
 from .models import Category, Article, Tag
 from django.db.models import Q, F
 from datetime import datetime
@@ -76,6 +76,7 @@ def add_article(request):
         if form.is_valid():
             new_article = form.save(commit=False)
             new_article.owner = request.user
+            print(request.POST)
 
             # 判断用户点击了哪个按钮
             if 'publish' in request.POST:
@@ -148,5 +149,23 @@ def published_articles(request):
 
 @login_required(login_url='users:login')
 def draft_list(request):
-    drafts = request.session.get('draft_article', [])
-    return render(request, 'users/draft_list.html', {'drafts': drafts})
+    user = User.objects.get(id=request.user.id)
+    drafts = Article.objects.filter(owner=user, is_draft=True).order_by('-add_date')
+    paginator = Paginator(drafts, 6)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context = {'page_obj': page_obj}
+    return render(request, 'users/draft_list.html', context)
+
+
+@login_required(login_url='users:login')
+def delete_article(request, article_id):
+    article = get_object_or_404(Article, id=article_id, owner=request.user)
+    if request.method == 'POST':
+        article.delete()
+        messages.success(request, 'Chosen article was deleted successfully.')
+        return redirect('blog:draft_list')  # 删除成功后重定向到草稿列表页面
+    context = {'article': article}
+    return render(request, 'users/delete_article.html', context)
+
+
