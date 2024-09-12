@@ -278,7 +278,7 @@ ClassicEditor.create(document.querySelector('#editor'), editorConfig)
                     console.log('Redirecting to:', result.redirect);  // Debugging line
                     window.location.href = result.redirect;
                 } else {
-                    alert(isUpdate ? 'Failed to update article' : 'Failed to add article');
+                    alert( result.errors);
                     console.error('Errors:', result.errors);  // Print errors if available
                 }
             })
