@@ -34,7 +34,7 @@ class Article(models.Model):
     tags = models.ManyToManyField(Tag, blank=True, verbose_name='Article Tags')  # 使用 ManyToManyField
     owner = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Author')
     add_date = models.DateTimeField(auto_now_add=True, verbose_name='Publish Time')
-    mod_date = models.DateTimeField(auto_now_add=True, verbose_name='Last Modified Time')
+    mod_date = models.DateTimeField(auto_now=True, verbose_name='Last Modified Time')
     category = models.ForeignKey(Category, on_delete=models.CASCADE, verbose_name='Category')
     is_hot = models.BooleanField(default=False, verbose_name='Is Popular')
     views = models.IntegerField(default=0, verbose_name='Views')

@@ -7,7 +7,7 @@ admin.site.register(SideBar)
 
 
 class ArticleAdmin(admin.ModelAdmin):
-    list_display = ('id', 'title', 'category', 'is_draft', 'owner', 'views', 'is_hot', 'mod_date', )
+    list_display = ('id', 'title', 'category', 'is_draft', 'owner', 'views', 'is_hot', 'mod_date', 'add_date')
     list_filter = ('owner', )
     search_fields = ('title', 'description')
     list_editable = ('is_hot', )

@@ -113,7 +113,10 @@
                 </h1>
                 <div class="is-size-7 has-text-grey-light">
                 <span class="mr-6">Author: {{ article.owner }}</span>
-                <span>Publish Date: {{ article.add_date }}</span>
+                <span style="margin-right: 50px">Publish Date: {{ article.add_date }}</span>
+                    {% if article.add_date != article.mod_date %}
+                        <span>Last Modified: {{ article.mod_date }}</span>
+                    {% endif %}
                 </div>
                 <p>{{article.description|truncatechars:100}}</p>
             </div>
