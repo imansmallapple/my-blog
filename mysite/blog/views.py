@@ -138,7 +138,6 @@ def edit_article(request, article_id):
     return render(request, 'users/edit_article.html', context)
 
 
-
 @login_required(login_url='users:login')
 def published_articles(request):
     user = User.objects.get(id=request.user.id)

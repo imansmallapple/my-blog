@@ -82,8 +82,8 @@
             <div class="main-container">
                 <div class="editor-container editor-container_classic-editor" id="editor-container">
                     <div class="editor-container__editor">
-                        <div id="editor" data-initial-data="{{ add_form.content.value|default_if_none:'' }}">
-                            <!-- CKEditor will be initialized here -->
+                        <div id="editor" data-initial-data="{{ add_form.content.value|default_if_none:''|safe }}">
+
                         </div>
                     </div>
                 </div>

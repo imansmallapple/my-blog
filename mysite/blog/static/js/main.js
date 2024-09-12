@@ -230,13 +230,21 @@ const editorConfig = {
 ClassicEditor.create(document.querySelector('#editor'), editorConfig)
     .then(editor => {
         console.log('Editor was initialized', editor);
-
+        // 从模板获取初始数据 (这部分是 Django 模板引擎传递的数据)
+        const initialData = document.querySelector('#editor').getAttribute('data-initial-data');
+        console.log('initial data', initialData);
+        if (initialData) {
+            editor.setData(initialData);  // 如果有内容则加载到编辑器
+        } else {
+            editor.setData('');  // 如果没有内容，则加载空字符串
+        }
         // Handle form submission
         document.querySelector('#article-form').addEventListener('submit', (event) => {
             event.preventDefault();  // Prevent default form submission
 
             // Serialize CKEditor data and send it via AJAX
             const editorData = editor.getData();
+            console.log('CKEditor Data:', editorData);  // Debugging line to check editor content
             const formData = new FormData(document.querySelector('#article-form'));
             formData.append('content', editorData);
 
