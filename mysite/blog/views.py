@@ -8,7 +8,7 @@ from django.db.models import Q, F
 from datetime import datetime
 from django.core.paginator import Paginator
 from django.contrib.auth.models import User
-from .forms import AddForm, ArticleForm
+from .forms import AddForm, ArticleForm, CommentForm
 
 
 def index(request):
@@ -32,14 +32,31 @@ def category_list(request, category_id):
 
 def article_detail(request, article_id):
     article = get_object_or_404(Article, id=article_id)
-
+    comments = article.comments.all()  # 获取该文章的所有评论
     # ordered by article id
     prev_article = Article.objects.filter(id__lt=article_id).last()
     next_article = Article.objects.filter(id__gt=article_id).first()
 
-    print(article.views)
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            comment = form.save(commit=False)
+            comment.article = article
+            comment.user = request.user  # 关联当前用户
+            comment.save()
+            return redirect('blog:article_detail', article_id=article.id)
+    else:
+        form = CommentForm()
+
+    # print(article.views)
     Article.objects.filter(id=article_id).update(views=F('views') + 1)  # not recommended
-    context = {'article': article, 'prev_article': prev_article, 'next_article': next_article}
+    context = {
+               'article': article,
+               'prev_article': prev_article,
+               'next_article': next_article,
+               'comments': comments,
+               'form': form,
+               }
     return render(request, 'blog/detail.html', context)
 
 

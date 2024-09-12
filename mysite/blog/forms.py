@@ -1,7 +1,7 @@
 from django import forms
 from django.core.exceptions import ValidationError
 
-from .models import Article, Tag
+from .models import Article, Tag, Comment
 
 
 class AddForm(forms.ModelForm):
@@ -45,3 +45,12 @@ class ArticleForm(forms.ModelForm):
     def clean_content(self):
         content = self.cleaned_data.get('content')
         return content
+
+
+class CommentForm(forms.ModelForm):
+    class Meta:
+        model = Comment
+        fields = ['content']
+        widgets = {
+            'content': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Add a comment...'}),
+        }

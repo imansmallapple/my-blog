@@ -48,6 +48,23 @@ class Article(models.Model):
         return self.title
 
 
+class Comment(models.Model):
+    article = models.ForeignKey(Article, on_delete=models.CASCADE, related_name='comments', verbose_name='Article')
+    user = models.ForeignKey(User, on_delete=models.CASCADE, verbose_name='Author')  # 评论者
+    content = models.TextField(verbose_name='Comment Content')  # 评论内容
+    add_date = models.DateTimeField(auto_now_add=True, verbose_name='Created Time')  # 评论创建时间
+    mod_date = models.DateTimeField(auto_now=True, verbose_name='Updated Time')  # 评论更新时间
+    is_hot = models.BooleanField(default=False, verbose_name='Is Popular')
+
+    class Meta:
+        verbose_name = 'Comment'
+        verbose_name_plural = 'Comments'
+        ordering = ['-add_date']  # 按时间倒序排列评论
+
+    def __str__(self):
+        return f'Comment by {self.user.username} on {self.article.title}'
+
+
 class SideBar(models.Model):
     STATUS = (
         (1, 'Hide'),
