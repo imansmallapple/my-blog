@@ -41,6 +41,8 @@
 {% endblock %}
 
 {% block content %}
+<input type="hidden" id="article-id" value="{{ article.id }}">
+
 <form action="{% url 'blog:edit_article' article.id %}" method="post" id="article-form" enctype="multipart/form-data">
     {% csrf_token %}
     <div class="field is-horizontal" style="align-items: center;">
@@ -82,8 +84,8 @@
             <div class="main-container">
                 <div class="editor-container editor-container_classic-editor" id="editor-container">
                     <div class="editor-container__editor">
-                        <div id="editor" data-initial-data="{{ add_form.content.value|default_if_none:''|safe }}">
-
+                        <div id="editor" data-initial-data="{{ add_form.content.value|default_if_none:'' }}">
+                            {{ add_form.content.value|default_if_none:''|safe }}
                         </div>
                     </div>
                 </div>
@@ -124,7 +126,7 @@
 
     <div class="button-container" style="">
         <input class="button is-primary" type="submit" name="save_as_draft" value="Save as Draft" style="margin-right: 755px;">
-        <input class="button is-info" type="submit" name="publish" value="Publish" style="margin-right: 5px;">
+        <input class="button is-info" type="submit" name="update" value="Save Changes" style="margin-right: 5px;">
     </div>
     <div class="is-clearfix"></div>
 </form>

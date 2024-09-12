@@ -119,19 +119,16 @@ def add_article(request):
 
 @login_required(login_url='users:login')
 def edit_article(request, article_id):
-    # 获取用户当前想要编辑的文章
     article = get_object_or_404(Article, id=article_id, owner=request.user)
 
     if request.method == 'POST':
-        # POST 请求意味着表单被提交
         form = ArticleForm(request.POST, request.FILES, instance=article)
         if form.is_valid():
-            form.save()  # 保存表单，并更新文章
-            return JsonResponse({'success': True, 'redirect': reverse('blog:index')})  # JSON 响应，用于前端处理
+            form.save()  # Save the updated article
+            return JsonResponse({'success': True, 'redirect': reverse('blog:index')})
         else:
-            return JsonResponse({'success': False, 'errors': form.errors})  # 如果有错误，返回错误信息
+            return JsonResponse({'success': False, 'errors': form.errors.as_json()})  # Provide detailed error messages
     else:
-        # 如果是 GET 请求，渲染表单，传递当前文章的内容
         form = ArticleForm(instance=article)
 
     context = {'add_form': form, 'article': article}

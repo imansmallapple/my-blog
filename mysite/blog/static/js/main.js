@@ -238,40 +238,56 @@ ClassicEditor.create(document.querySelector('#editor'), editorConfig)
         } else {
             editor.setData('');  // 如果没有内容，则加载空字符串
         }
-        // Handle form submission
         document.querySelector('#article-form').addEventListener('submit', (event) => {
             event.preventDefault();  // Prevent default form submission
+
+            const buttonName = event.submitter ? event.submitter.name : 'add';  // Get the name of the clicked button
+            const articleIdInput = document.querySelector('#article-id');
+            const articleId = articleIdInput ? articleIdInput.value : '';
+            const isUpdate = buttonName === 'update';
+            const url = isUpdate ? `/edit_article/${articleId}/` : '/add_article/';  // Determine URL based on button
+
+            // Debugging: Log URL and form data
+            console.log('Form URL:', url);
+            console.log('Article ID:', articleId);
+            console.log('Button Name:', buttonName);
 
             // Serialize CKEditor data and send it via AJAX
             const editorData = editor.getData();
             console.log('CKEditor Data:', editorData);  // Debugging line to check editor content
+
             const formData = new FormData(document.querySelector('#article-form'));
             formData.append('content', editorData);
 
-            fetch('/add_article/', {
+            fetch(url, {
                 method: 'POST',
                 body: formData,
                 headers: {
                     'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
-                     'Accept': 'application/json'  // 确保接受 JSON 响应
+                    'Accept': 'application/json'  // Ensure accepting JSON response
                 }
             })
-            .then(response => response.json())
+            .then(response => {
+                console.log('Response Status:', response.status);  // Log the status of the response
+                return response.json();
+            })
             .then(result => {
-            console.log('Server Response:', result);
+                console.log('Server Response:', result);
                 if (result.success) {
-                    alert('Article added successfully!');
+                    alert(isUpdate ? 'Article updated successfully!' : 'Article added successfully!');
                     console.log('Redirecting to:', result.redirect);  // Debugging line
                     window.location.href = result.redirect;
                 } else {
-                    alert('Failed to add article');
+                    alert(isUpdate ? 'Failed to update article' : 'Failed to add article');
+                    console.error('Errors:', result.errors);  // Print errors if available
                 }
             })
             .catch(error => {
                 console.error('Fetch error:', error);  // Print fetch error for debugging
-                alert('Failed to add article');
+                alert(isUpdate ? 'Failed to update article' : 'Failed to add article');
             });
         });
+
     })
     .catch(error => {
         console.error('There was a problem initializing the editor:', error);
