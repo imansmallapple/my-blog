@@ -34,7 +34,7 @@
     {% csrf_token %}
     <div class="field">
         <div class="control">
-            {{ form.content }} <!-- 自动渲染表单字段 -->
+            {{ form.content }}
         </div>
     </div>
     <div class="field is-grouped">
@@ -44,162 +44,11 @@
     </div>
 </form>
 <br/>
+
 {% if user.is_authenticated %}
 <div class="box">
     {% for comment in comments %}
-        <article class="media">
-            <div class="media-left">
-                <figure class="image is-64x64">
-                    {% if comment.user.userprofile.image %}
-                        <img class="is-rounded" src="{{ MEDIA_URL }}{{ comment.user.userprofile.image.url }}" alt="">
-                    {% else %}
-                        <img class="is-rounded" src="{% static 'users/images/avatar.png' %}" alt="">
-                    {% endif %}
-                </figure>
-            </div>
-            <div class="media-content">
-                <div class="content">
-                    <p style="margin-bottom: 0;">
-                        <div style="display: flex; align-items: center; justify-content: space-between;">
-                            <span>
-                                {% if comment.user.userprofile.nick_name %}
-                                    <strong>{{ comment.user.userprofile.nick_name }}</strong>
-                                {% else %}
-                                    <strong>{{ comment.user }}</strong>
-                                {% endif %}
-                                <small>@{{ comment.user }}</small>
-                            </span>
-                        </div>
-                    </p>
-                    <p class="comment-content">
-                        {{ comment.content|safe|linebreaks }}
-                    </p>
-                    <!-- 将时间和图标放在同一行 -->
-                    <div style="display: flex; align-items: center;">
-                        <small style="color: #a0a0a0;">{{ comment.add_date }}</small>
-                        <nav class="level is-mobile" style="display: flex; align-items: center;">
-                            <a class="level-item" aria-label="ewew">
-                                <span class="icon is-small">
-                                    <i class="fas fa-reply" aria-hidden="true"></i>
-                                </span>
-                            </a>
-                            <a class="level-item reply-button"
-                               aria-label="reply"
-                               data-username="{{ comment.user.username }}"
-                               data-id="comment-{{ comment.id }}">
-                                <span class="icon is-small">
-                                    <i class="fas fa-retweet" aria-hidden="true">
-                                        <img src="{% static 'blog/images/reply.png' %}" style="margin-top:5px">
-                                    </i>
-                                </span>
-                            </a>
-                            <a class="level-item" aria-label="like">
-                                <span class="icon is-small">
-                                    <i class="fas fa-heart" aria-hidden="true">
-                                        <img src="{% static 'blog/images/like.png' %}" style="margin-top:3px">
-                                    </i>
-                                </span>
-                            </a>
-                            {% if comment.likes %}
-                                <span style="vertical-align: bottom; margin-left: 5px;">{{ comment.likes }}</span>
-                            {% endif %}
-                        </nav>
-                    </div>
-                </div>
-            </div>
-        </article>
-        <!-- 隐藏回复表单，初始状态为隐藏 -->
-        <div class="media-content reply-form"
-             id="reply-form-comment-{{ comment.id }}"
-             style="display: none;">
-            <form method="post">
-                {% csrf_token %}
-                <input type="hidden" name="parent_id" value="{{ comment.id }}">
-                <div class="field">
-                    <div class="control">
-                        <textarea name="content" class="textarea" placeholder="Reply to @{{ comment.user.username }}"></textarea>
-                    </div>
-                </div>
-                <div class="field is-grouped">
-                    <div class="control" style="margin-left: auto;">
-                        <button class="button is-link" type="submit">Reply</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-        <!-- 显示评论的回复 -->
-        <div class="media-container" style="display: flex; flex-direction: column; margin-left: 80px;">
-            {% for reply in comment.replies.all %}
-                <article class="media" style="display: flex; margin-bottom: 10px;">
-                    <div class="media-middle" style="margin-top:17px">
-                        <figure class="image is-32x32">
-                            {% if reply.user.userprofile.image %}
-                                <img class="is-rounded" src="{{ MEDIA_URL }}{{ reply.user.userprofile.image.url }}" alt="">
-                            {% else %}
-                                <img class="is-rounded" src="{% static 'users/images/avatar.png' %}" alt="">
-                            {% endif %}
-                        </figure>
-                    </div>
-                    <div class="media-content" style="flex: 1; margin-left: 10px;">
-                        <div class="content">
-                            <p>
-                                <div style="display: flex; align-items: center;">
-                                    <strong style="margin-right: 10px;">{{ reply.user }}</strong>
-                                    <span style="flex: 1;">
-                                        {{ reply.content|safe|linebreaks }}
-                                    </span>
-                                </div>
-                            </p>
-                            <!-- 时间和图标放在同一行 -->
-                            <div style="display: flex; align-items: center;">
-                                <small style="color: #a0a0a0;">{{ reply.add_date }}</small>
-                                <nav class="level is-mobile" style="display: flex; align-items: center;">
-                                    <a class="level-item" aria-label="ewew">
-                                        <span class="icon is-small">
-                                            <i class="fas fa-reply" aria-hidden="true"></i>
-                                        </span>
-                                    </a>
-                                    <a class="level-item reply-button" aria-label="reply" data-id="reply-{{ reply.id }}">
-                                        <span class="icon is-small">
-                                            <i class="fas fa-retweet" aria-hidden="true">
-                                                <img src="{% static 'blog/images/reply.png' %}" style="margin-top:5px">
-                                            </i>
-                                        </span>
-                                    </a>
-                                    <a class="level-item" aria-label="like">
-                                        <span class="icon is-small">
-                                            <i class="fas fa-heart" aria-hidden="true">
-                                                <img src="{% static 'blog/images/like.png' %}" style="margin-top:3px">
-                                            </i>
-                                        </span>
-                                    </a>
-                                    {% if reply.likes %}
-                                        <span style="vertical-align: bottom; margin-left: 5px;">{{ reply.likes }}</span>
-                                    {% endif %}
-                                </nav>
-                            </div>
-                        </div>
-                    </div>
-                </article>
-                    <!-- 回复的回复表单，使用唯一的ID -->
-                    <div class="media-content reply-form" id="reply-form-reply-{{ reply.id }}" style="display: none;">
-                        <form method="post">
-                            {% csrf_token %}
-                            <input type="hidden" name="parent_id" value="{{ reply.id }}">
-                            <div class="field">
-                                <div class="control">
-                                    <textarea name="content" class="textarea" placeholder="Reply to @{{ reply.user.username }}"></textarea>
-                                </div>
-                            </div>
-                            <div class="field is-grouped">
-                                <div class="control" style="margin-left: auto;">
-                                    <button class="button is-link" type="submit">Reply</button>
-                                </div>
-                            </div>
-                        </form>
-                    </div>
-            {% endfor %}
-        </div>
+        {% include 'blog/comment_template.html' with comment=comment %}
     {% endfor %}
 </div>
 {% else %}
@@ -232,6 +81,7 @@
         </div>
     </div>
 </div>
+
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         // 获取textarea元素

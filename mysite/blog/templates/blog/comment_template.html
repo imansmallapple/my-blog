@@ -1,0 +1,148 @@
+{% load static %}
+<style>
+    /* 基本评论样式 */
+    .comment, .reply {
+        margin-bottom: 10px;
+        display: flex;
+        align-items: flex-start; /* 头像和内容对齐 */
+    }
+
+    /* 评论和回复内容容器 */
+    .comment-content, .reply-content {
+        margin-left: 10px; /* 内容与头像的间距 */
+        flex: 1; /* 内容区域占据剩余空间 */
+    }
+
+    /* 回复的容器，控制所有级别的缩进 */
+    .media-container {
+        padding-left: 20px; /* 统一的缩进 */
+    }
+
+    /* 回复表单样式 */
+    .reply-form {
+        margin-top: 10px;
+        display: none; /* 初始隐藏 */
+    }
+
+    /* 评论头部样式 */
+    .comment-header, .reply-header {
+        display: flex;
+        align-items: center; /* 头像和用户名在同一行 */
+    }
+
+    /* 评论页脚样式 */
+    .comment-footer, .reply-footer {
+        display: flex;
+        align-items: center;
+    }
+
+    /* 评论点赞计数样式 */
+    .like-count {
+        vertical-align: bottom;
+        margin-left: 5px;
+    }
+
+    /* 头像样式 */
+    .media-left .image {
+        border-radius: 50%; /* 使头像圆形 */
+        overflow: hidden; /* 隐藏溢出的部分 */
+    }
+
+    .comment .media-left .image {
+        width: 48px; /* 主评论头像宽度 */
+        height: 48px; /* 主评论头像高度 */
+    }
+
+    .reply .media-left .image {
+        width: 32px; /* 回复头像宽度 */
+        height: 32px; /* 回复头像高度 */
+    }
+
+    .media-left .image img {
+        width: 100%; /* 使图片填满容器 */
+        height: auto; /* 保持图片纵横比 */
+        display: block; /* 去除图片底部的空白 */
+    }
+</style>
+
+<!-- 主评论或回复 -->
+<article class="media {% if comment.parent %}reply{% else %}comment{% endif %}">
+    <div class="media-left">
+        <figure class="image">
+            {% if comment.user.userprofile.image %}
+                <img class="is-rounded" src="{{ MEDIA_URL }}{{ comment.user.userprofile.image.url }}" alt="User Avatar">
+            {% else %}
+                <img class="is-rounded" src="{% static 'users/images/avatar.png' %}" alt="Default Avatar">
+            {% endif %}
+        </figure>
+    </div>
+    <div class="media-content comment-content">
+        <div class="comment-header">
+            <strong>{{ comment.user }}</strong>
+                            <!-- 显示父评论（或父回复） -->
+        {% if comment.parent %}
+            <div class="parent-comment" style="margin-left: 10px; solid #ddd;">
+                <p>replies<strong> @{{ comment.parent.user }}</strong>:</p>
+            </div>
+            <p style="margin-left:5px">{{ comment.content|safe|linebreaks }}</p>
+        {% endif %}
+        </div>
+        {% if not comment.parent %}
+                <p>{{ comment.content|safe|linebreaks }}</p>
+        {% endif %}
+        <div class="comment-footer">
+            <small style="color: #a0a0a0;">{{ comment.add_date }}</small>
+            <nav class="level is-mobile">
+                <a class="level-item" aria-label="reply">
+                    <span class="icon is-small">
+                        <i class="fas fa-reply" aria-hidden="true"></i>
+                    </span>
+                </a>
+                <a class="level-item reply-button" aria-label="reply" data-id="comment-{{ comment.id }}">
+                    <span class="icon is-small">
+                        <i class="fas fa-retweet" aria-hidden="true">
+                            <img src="{% static 'blog/images/reply.png' %}" style="margin-top:5px">
+                        </i>
+                    </span>
+                </a>
+                <a class="level-item" aria-label="like">
+                    <span class="icon is-small">
+                        <i class="fas fa-heart" aria-hidden="true">
+                            <img src="{% static 'blog/images/like.png' %}" style="margin-top:3px">
+                        </i>
+                    </span>
+                </a>
+                {% if comment.likes %}
+                    <span class="like-count">{{ comment.likes }}</span>
+                {% endif %}
+            </nav>
+        </div>
+    </div>
+</article>
+
+<!-- 回复表单，使用唯一的ID -->
+<div class="reply-form" id="reply-form-comment-{{ comment.id }}">
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="parent_id" value="{{ comment.id }}">
+        <div class="field">
+            <div class="control">
+                <textarea name="content" class="textarea" placeholder="Reply to @{{ comment.user.username }}"></textarea>
+            </div>
+        </div>
+        <div class="field is-grouped">
+            <div class="control" style="margin-left: auto;">
+                <button class="button is-link" type="submit">Reply</button>
+            </div>
+        </div>
+    </form>
+</div>
+
+<!-- 渲染子回复 -->
+{% if comment.replies.all %}
+    <div class="media-container">
+        {% for reply in comment.replies.all %}
+            {% include 'blog/comment_template.html' with comment=reply %}
+        {% endfor %}
+    </div>
+{% endif %}
