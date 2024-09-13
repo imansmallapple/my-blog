@@ -83,7 +83,10 @@
                                     <i class="fas fa-reply" aria-hidden="true"></i>
                                 </span>
                             </a>
-                            <a class="level-item reply-button" aria-label="reply" data-username="{{ comment.user.username }}">
+                            <a class="level-item reply-button"
+                               aria-label="reply"
+                               data-username="{{ comment.user.username }}"
+                               data-id="comment-{{ comment.id }}">
                                 <span class="icon is-small">
                                     <i class="fas fa-retweet" aria-hidden="true">
                                         <img src="{% static 'blog/images/reply.png' %}" style="margin-top:5px">
@@ -106,7 +109,9 @@
             </div>
         </article>
         <!-- 隐藏回复表单，初始状态为隐藏 -->
-        <div class="media-content reply-form" style="display: none;">
+        <div class="media-content reply-form"
+             id="reply-form-comment-{{ comment.id }}"
+             style="display: none;">
             <form method="post">
                 {% csrf_token %}
                 <input type="hidden" name="parent_id" value="{{ comment.id }}">
@@ -154,7 +159,7 @@
                                             <i class="fas fa-reply" aria-hidden="true"></i>
                                         </span>
                                     </a>
-                                    <a class="level-item" aria-label="reply">
+                                    <a class="level-item reply-button" aria-label="reply" data-id="reply-{{ reply.id }}">
                                         <span class="icon is-small">
                                             <i class="fas fa-retweet" aria-hidden="true">
                                                 <img src="{% static 'blog/images/reply.png' %}" style="margin-top:5px">
@@ -176,6 +181,23 @@
                         </div>
                     </div>
                 </article>
+                    <!-- 回复的回复表单，使用唯一的ID -->
+                    <div class="media-content reply-form" id="reply-form-reply-{{ reply.id }}" style="display: none;">
+                        <form method="post">
+                            {% csrf_token %}
+                            <input type="hidden" name="parent_id" value="{{ reply.id }}">
+                            <div class="field">
+                                <div class="control">
+                                    <textarea name="content" class="textarea" placeholder="Reply to @{{ reply.user.username }}"></textarea>
+                                </div>
+                            </div>
+                            <div class="field is-grouped">
+                                <div class="control" style="margin-left: auto;">
+                                    <button class="button is-link" type="submit">Reply</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
             {% endfor %}
         </div>
     {% endfor %}
@@ -263,4 +285,5 @@
         });
     });
 </script>
+
 {% endblock %}
