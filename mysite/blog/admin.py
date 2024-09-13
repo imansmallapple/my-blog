@@ -34,7 +34,7 @@ class ArticleAdmin(admin.ModelAdmin):
 
 
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ('id', 'formatted_content', 'article', 'user', 'mod_date', 'add_date', 'is_hot')
+    list_display = ('id', 'formatted_content', 'article', 'user', 'is_hot', 'likes', 'dislikes', 'mod_date', 'add_date')
     list_filter = ('user', )
     search_fields = ('article__title', 'user__username')
     list_editable = ('is_hot', )

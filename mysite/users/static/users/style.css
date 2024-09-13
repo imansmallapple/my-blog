@@ -11,3 +11,9 @@ html, body{
     gap: 100px; /* 添加按钮之间的间隔 */
 }
 
+.comment-content {
+    white-space: pre-wrap; /* 保留换行和空白，且不会溢出容器 */
+    word-wrap: break-word; /* 遇到长单词时换行 */
+    background-color: inherit; /* 保持背景色和父容器一致 */
+}
+

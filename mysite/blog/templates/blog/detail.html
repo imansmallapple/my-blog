@@ -13,9 +13,21 @@
         {{article.content|safe}}
     </div>
 </div>
+<form method="post">
+    {% csrf_token %}
+    <div class="field">
+        <div class="control">
+            {{ form.content }}  <!-- 自动渲染表单字段 -->
+        </div>
+    </div>
+    <div class="field is-grouped">
+        <div class="control" style=" margin-left: auto;" >
+            <button class="button is-link" type="submit">Publish</button>
+        </div>
+    </div><!-- 在模板的底部添加JavaScript -->
+</form>
+<br/>
 
-<textarea class="textarea" placeholder="leave your comment here.">
-</textarea>
 <div class="box">
 {% for comment in comments %}
   <article class="media">
@@ -29,25 +41,22 @@
       </figure>
     </div>
     <div class="media-content">
-<div class="content">
-  <p style="display: flex; justify-content: space-between; align-items: center;">
-    <span>
-        {% if comment.user.userprofile.nick_name %}
-          <strong>{{ comment.user.userprofile.nick_name }}</strong>
-        {% else %}
-          <strong>{{ comment.user }}</strong>
-        {% endif %}
-      <small>@{{ comment.user }}</small>
-    </span>
-  </p>
-  <p>
-        {{comment.content|safe}}
-  </p>
-  <small style="color: #a0a0a0;">{{ comment.add_date }}</small>
-</div>
-
-
-
+        <div class="content">
+          <p style="display: flex; justify-content: space-between; align-items: center;">
+            <span>
+                {% if comment.user.userprofile.nick_name %}
+                  <strong>{{ comment.user.userprofile.nick_name }}</strong>
+                {% else %}
+                  <strong>{{ comment.user }}</strong>
+                {% endif %}
+              <small>@{{ comment.user }}</small>
+            </span>
+          </p>
+            <p class="comment-content">
+                {{ comment.content|safe|linebreaks }}
+            </p>
+          <small style="color: #a0a0a0;">{{ comment.add_date }}</small>
+        </div>
       <nav class="level is-mobile">
         <div class="level-left">
           <a class="level-item" aria-label="reply">
@@ -60,32 +69,25 @@
               <i class="fas fa-retweet" aria-hidden="true"></i>
             </span>
           </a>
-          <a class="level-item" aria-label="like">
-            <span class="icon is-small">
-              <i class="fas fa-heart" aria-hidden="true"></i>
+            <span class="level-left">
+              <a class="level-item" aria-label="like">
+                <span class="icon is-small">
+                  <i class="fas fa-heart" aria-hidden="true">
+                    <img src="{% static 'blog/images/like.png' %}" style="margin-top:3px">
+                  </i>
+                </span>
+              </a>
+                {% if comment.likes == 0 %}
+                {% else %}
+                  <span style="vertical-align: bottom;">{{ comment.likes }}</span>
+                {% endif %}
             </span>
-          </a>
+
         </div>
       </nav>
     </div>
   </article>
 {%endfor%}
-</div>
-
-<div class="box">
-    comment area
-    <div class="content">
-        {% for comment in comments %}
-        {% if user.userprofile.image %}
-            <img class=" is-rounded" src="{{ MEDIA_URL }}{{ user.userprofile.image.url }}" alt="" srcset="">
-        {% else %}
-            <img class=" is-rounded" src="{% static 'users/images/avatar.png' %}" alt="" srcset="">
-        {% endif %}
-        <span class="mr-6">Author: {{ comment.user }}</span>
-        <span style="margin-right: 50px">Date: {{ comment.add_date }}</span>
-        {{comment.content|safe}}
-        {% endfor %}
-    </div>
 </div>
 
 <div class="box">
@@ -109,4 +111,26 @@
         </div>
     </div>
 </div>
+<script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 获取textarea元素
+            const textarea = document.querySelector('textarea');
+
+            if (textarea) {
+                // 定义一个函数来调整textarea的高度
+                function autoResizeTextarea() {
+                    // 先将高度设为auto，以便获取正确的scrollHeight
+                    textarea.style.height = 'auto';
+                    // 根据内容的scrollHeight设置新的高度
+                    textarea.style.height = (textarea.scrollHeight) + 'px';
+                }
+
+                // 监听input事件来动态调整高度
+                textarea.addEventListener('input', autoResizeTextarea);
+
+                // 初始化textarea高度，适应初始内容
+                autoResizeTextarea();
+            }
+        });
+    </script>
 {% endblock %}

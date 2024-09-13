@@ -52,5 +52,10 @@ class CommentForm(forms.ModelForm):
         model = Comment
         fields = ['content']
         widgets = {
-            'content': forms.Textarea(attrs={'rows': 3, 'placeholder': 'Add a comment...'}),
+            'content': forms.Textarea(attrs={'class': 'textarea', 'rows': 1, 'placeholder': 'Add a comment...'}),
         }
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        # 如果 content 字段的值为 None，将其初始化为空字符串
+        self.fields['content'].initial = self.fields['content'].initial or ''
