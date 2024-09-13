@@ -38,13 +38,17 @@ def article_detail(request, article_id):
     next_article = Article.objects.filter(id__gt=article_id).first()
 
     if request.method == 'POST':
-        form = CommentForm(request.POST)
-        if form.is_valid():
-            comment = form.save(commit=False)
-            comment.article = article
-            comment.user = request.user  # 关联当前用户
-            comment.save()
-            return redirect('blog:article_detail', article_id=article.id)
+        if request.user.is_authenticated:
+            form = CommentForm(request.POST)
+            if form.is_valid():
+                comment = form.save(commit=False)
+                comment.article = article
+                comment.user = request.user
+                comment.save()
+                return redirect('blog:article_detail', article_id=article.id)
+        else:
+            messages.info(request, "Please log in to comment.")
+            return redirect(request.path)  # 假设你的登录视图的 URL 名为 'login'
     else:
         form = CommentForm()
 

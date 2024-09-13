@@ -13,6 +13,23 @@
         {{article.content|safe}}
     </div>
 </div>
+
+{% if messages %}
+    <div class="messages" style="margin-bottom:10px">
+        {% for message in messages %}
+            <article class="message is-danger">
+              <div class="message-header">
+                <p>Message Box</p>
+                <button class="delete" aria-label="delete"></button>
+              </div>
+              <div class="message-body">
+                {{ message }}
+              </div>
+            </article>
+        {% endfor %}
+    </div>
+{% endif %}
+
 <form method="post">
     {% csrf_token %}
     <div class="field">
@@ -27,7 +44,7 @@
     </div><!-- 在模板的底部添加JavaScript -->
 </form>
 <br/>
-
+{% if user.is_authenticated %}
 <div class="box">
 {% for comment in comments %}
   <article class="media">
@@ -89,6 +106,15 @@
   </article>
 {%endfor%}
 </div>
+{% else %}
+<div class="box">
+        <div class="level">
+        <div class="level-left">
+           After login can view all comments.
+        </div>
+    </div>
+</div>
+{% endif %}
 
 <div class="box">
         <div class="level">
@@ -115,7 +141,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             // 获取textarea元素
             const textarea = document.querySelector('textarea');
-
+            // 获取所有删除按钮
+            const deleteButtons = document.querySelectorAll('.message .delete');
             if (textarea) {
                 // 定义一个函数来调整textarea的高度
                 function autoResizeTextarea() {
@@ -131,6 +158,17 @@
                 // 初始化textarea高度，适应初始内容
                 autoResizeTextarea();
             }
+                    // 为每个删除按钮添加点击事件监听器
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // 找到当前按钮所在的消息框
+                    const message = this.closest('.message');
+                    // 隐藏消息框
+                    if (message) {
+                        message.style.display = 'none';
+                    }
+                });
+            });
         });
     </script>
 {% endblock %}
