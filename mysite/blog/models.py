@@ -57,6 +57,7 @@ class Comment(models.Model):
     is_hot = models.BooleanField(default=False, verbose_name='Is Popular')
     likes = models.IntegerField(default=0, verbose_name='Likes')
     dislikes = models.IntegerField(default=0, verbose_name='Dislikes')
+    parent = models.ForeignKey('self', null=True, blank=True, related_name='replies', on_delete=models.CASCADE)
 
     class Meta:
         verbose_name = 'Comment'
@@ -64,7 +65,7 @@ class Comment(models.Model):
         ordering = ['-add_date']  # 按时间倒序排列评论
 
     def __str__(self):
-        return f'Comment by {self.user.username} on {self.article.title}'
+        return f'{self.user.username} - {self.content[:20]}'
 
 
 class SideBar(models.Model):

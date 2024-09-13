@@ -46,75 +46,122 @@
 <br/>
 {% if user.is_authenticated %}
 <div class="box">
-{% for comment in comments %}
-  <article class="media">
-    <div class="media-left">
-      <figure class="image is-64x64">
-        {% if comment.user.userprofile.image %}
-            <img class=" is-rounded" src="{{ MEDIA_URL }}{{ user.userprofile.image.url }}" alt="" srcset="">
-        {% else %}
-            <img class=" is-rounded" src="{% static 'users/images/avatar.png' %}" alt="" srcset="">
-        {% endif %}
-      </figure>
-    </div>
-    <div class="media-content">
-        <div class="content">
-          <p style="display: flex; justify-content: space-between; align-items: center;">
-            <span>
-                {% if comment.user.userprofile.nick_name %}
-                  <strong>{{ comment.user.userprofile.nick_name }}</strong>
-                {% else %}
-                  <strong>{{ comment.user }}</strong>
-                {% endif %}
-              <small>@{{ comment.user }}</small>
-            </span>
-          </p>
-            <p class="comment-content">
-                {{ comment.content|safe|linebreaks }}
-            </p>
-          <small style="color: #a0a0a0;">{{ comment.add_date }}</small>
+    {% for comment in comments %}
+      <article class="media">
+        <div class="media-left">
+          <figure class="image is-64x64">
+            {% if comment.user.userprofile.image %}
+                <img class=" is-rounded" src="{{ MEDIA_URL }}{{ user.userprofile.image.url }}" alt="" srcset="">
+            {% else %}
+                <img class=" is-rounded" src="{% static 'users/images/avatar.png' %}" alt="" srcset="">
+            {% endif %}
+          </figure>
         </div>
-      <nav class="level is-mobile">
-        <div class="level-left">
-          <a class="level-item" aria-label="reply">
-            <span class="icon is-small">
-              <i class="fas fa-reply" aria-hidden="true"></i>
-            </span>
-          </a>
-          <a class="level-item" aria-label="retweet">
-            <span class="icon is-small">
-              <i class="fas fa-retweet" aria-hidden="true"></i>
-            </span>
-          </a>
-            <span class="level-left">
-              <a class="level-item" aria-label="like">
+        <div class="media-content">
+            <div class="content">
+              <p style="display: flex; justify-content: space-between; align-items: center;">
+                <span>
+                    {% if comment.user.userprofile.nick_name %}
+                      <strong>{{ comment.user.userprofile.nick_name }}</strong>
+                    {% else %}
+                      <strong>{{ comment.user }}</strong>
+                    {% endif %}
+                  <small>@{{ comment.user }}</small>
+                </span>
+              </p>
+                <p class="comment-content">
+                    {{ comment.content|safe|linebreaks }}
+                </p>
+              <small style="color: #a0a0a0;">{{ comment.add_date }}</small>
+            </div>
+          <nav class="level is-mobile">
+            <div class="level-left">
+              <a class="level-item" aria-label="ewew">
                 <span class="icon is-small">
-                  <i class="fas fa-heart" aria-hidden="true">
-                    <img src="{% static 'blog/images/like.png' %}" style="margin-top:3px">
+                  <i class="fas fa-reply" aria-hidden="true"></i>
+                </span>
+              </a>
+              <a class="level-item reply-button" aria-label="reply">
+                <span class="icon is-small">
+                  <i class="fas fa-retweet" aria-hidden="true">
+                    <img src="{% static 'blog/images/reply.png' %}" style="margin-top:5px">
                   </i>
                 </span>
               </a>
-                {% if comment.likes == 0 %}
-                {% else %}
-                  <span style="vertical-align: bottom;">{{ comment.likes }}</span>
-                {% endif %}
-            </span>
+                <span class="level-left">
+                  <a class="level-item" aria-label="like">
+                    <span class="icon is-small">
+                      <i class="fas fa-heart" aria-hidden="true">
+                        <img src="{% static 'blog/images/like.png' %}" style="margin-top:3px">
+                      </i>
+                    </span>
+                  </a>
+                    {% if comment.likes == 0 %}
+                    {% else %}
+                      <span style="vertical-align: bottom;">{{ comment.likes }}</span>
+                    {% endif %}
+                </span>
 
+            </div>
+          </nav>
         </div>
-      </nav>
+      </article>
+            <!-- 隐藏回复表单，初始状态为隐藏 -->
+            <div class="media-content reply-form" style="display: none;">
+              <form method="post">
+                  {% csrf_token %}
+                  <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                  <div class="field">
+                      <div class="control">
+                          <textarea name="content" class="textarea" placeholder="Reply to this comment"></textarea>
+                      </div>
+                  </div>
+                  <div class="field is-grouped">
+                      <div class="control" style=" margin-left: auto;">
+                          <button class="button is-link" type="submit">Reply</button>
+                      </div>
+                  </div>
+              </form>
+            </div>
+
+            <!-- 显示评论的回复 -->
+            <div class="media">
+                {% for reply in comment.replies.all %}
+                    <article class="media">
+                        <div class="media-left">
+                          <figure class="image is-48x48">
+                            {% if reply.user.userprofile.image %}
+                                <img class=" is-rounded" src="{{ MEDIA_URL }}{{ reply.user.userprofile.image.url }}" alt="">
+                            {% else %}
+                                <img class=" is-rounded" src="{% static 'users/images/avatar.png' %}" alt="">
+                            {% endif %}
+                          </figure>
+                        </div>
+                        <div class="media-content">
+                            <div class="content">
+                              <p>
+                                <strong>{{ reply.user }}</strong>
+                                <br>
+                                {{ reply.content|safe|linebreaks }}
+                                <br>
+                                <small>{{ reply.add_date }}</small>
+                              </p>
+                            </div>
+                        </div>
+                    </article>
+                {% endfor %}
+            </div>
+    {%endfor%}
     </div>
-  </article>
-{%endfor%}
-</div>
-{% else %}
-<div class="box">
-        <div class="level">
-        <div class="level-left">
-           After login can view all comments.
+    {% else %}
+    <div class="box">
+            <div class="level">
+            <div class="level-left">
+               After login can view all comments.
+            </div>
         </div>
     </div>
-</div>
-{% endif %}
+    {% endif %}
 
 <div class="box">
         <div class="level">
@@ -138,37 +185,57 @@
     </div>
 </div>
 <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // 获取textarea元素
-            const textarea = document.querySelector('textarea');
-            // 获取所有删除按钮
-            const deleteButtons = document.querySelectorAll('.message .delete');
-            if (textarea) {
-                // 定义一个函数来调整textarea的高度
-                function autoResizeTextarea() {
-                    // 先将高度设为auto，以便获取正确的scrollHeight
-                    textarea.style.height = 'auto';
-                    // 根据内容的scrollHeight设置新的高度
-                    textarea.style.height = (textarea.scrollHeight) + 'px';
-                }
+    document.addEventListener('DOMContentLoaded', function() {
+        // 获取textarea元素
+        const textarea = document.querySelector('textarea');
+        // 获取所有删除按钮
+        const deleteButtons = document.querySelectorAll('.message .delete');
+        // 获取所有的回复按钮
+        const replyButtons = document.querySelectorAll('.reply-button');
+        // 获取所有的回复表单
+        const replyForms = document.querySelectorAll('.reply-form');
 
-                // 监听input事件来动态调整高度
-                textarea.addEventListener('input', autoResizeTextarea);
-
-                // 初始化textarea高度，适应初始内容
-                autoResizeTextarea();
+        if (textarea) {
+            // 定义一个函数来调整textarea的高度
+            function autoResizeTextarea() {
+                // 先将高度设为auto，以便获取正确的scrollHeight
+                textarea.style.height = 'auto';
+                // 根据内容的scrollHeight设置新的高度
+                textarea.style.height = (textarea.scrollHeight) + 'px';
             }
-                    // 为每个删除按钮添加点击事件监听器
-            deleteButtons.forEach(button => {
-                button.addEventListener('click', function() {
-                    // 找到当前按钮所在的消息框
-                    const message = this.closest('.message');
-                    // 隐藏消息框
-                    if (message) {
-                        message.style.display = 'none';
-                    }
-                });
+
+            // 监听input事件来动态调整高度
+            textarea.addEventListener('input', autoResizeTextarea);
+
+            // 初始化textarea高度，适应初始内容
+            autoResizeTextarea();
+        }
+
+        // 为每个删除按钮添加点击事件监听器
+        deleteButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // 找到当前按钮所在的消息框
+                const message = this.closest('.message');
+                // 隐藏消息框
+                if (message) {
+                    message.style.display = 'none';
+                }
             });
         });
-    </script>
+
+        // 为每个回复按钮添加点击事件监听器
+        replyButtons.forEach((button, index) => {
+            button.addEventListener('click', function() {
+                const replyForm = replyForms[index];
+                // 切换显示/隐藏回复表单
+                if (replyForm.style.display === 'none' || replyForm.style.display === '') {
+                    replyForm.style.display = 'block';
+                } else {
+                    replyForm.style.display = 'none';
+                }
+            });
+        });
+    });
+</script>
+
 {% endblock %}

@@ -3,7 +3,7 @@ from django.http import JsonResponse
 from django.shortcuts import render, get_object_or_404, redirect
 from django.urls import reverse
 from django.contrib import messages
-from .models import Category, Article, Tag
+from .models import Category, Article, Tag, Comment
 from django.db.models import Q, F
 from datetime import datetime
 from django.core.paginator import Paginator
@@ -32,7 +32,7 @@ def category_list(request, category_id):
 
 def article_detail(request, article_id):
     article = get_object_or_404(Article, id=article_id)
-    comments = article.comments.all()  # 获取该文章的所有评论
+    comments = article.comments.filter(parent__isnull=True)  # 获取顶级评论（没有父评论）
     # ordered by article id
     prev_article = Article.objects.filter(id__lt=article_id).last()
     next_article = Article.objects.filter(id__gt=article_id).first()
@@ -44,6 +44,11 @@ def article_detail(request, article_id):
                 comment = form.save(commit=False)
                 comment.article = article
                 comment.user = request.user
+                # 检查是否为回复
+                parent_id = request.POST.get('parent_id')
+                if parent_id:
+                    parent_comment = Comment.objects.get(id=parent_id)
+                    comment.parent = parent_comment
                 comment.save()
                 return redirect('blog:article_detail', article_id=article.id)
         else:
