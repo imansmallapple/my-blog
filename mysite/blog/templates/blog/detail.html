@@ -59,36 +59,37 @@
             </div>
             <div class="media-content">
                 <div class="content">
-                    <p style="display: flex; justify-content: space-between; align-items: center;">
-                        <span>
-                            {% if comment.user.userprofile.nick_name %}
-                                <strong>{{ comment.user.userprofile.nick_name }}</strong>
-                            {% else %}
-                                <strong>{{ comment.user }}</strong>
-                            {% endif %}
-                            <small>@{{ comment.user }}</small>
-                        </span>
+                    <p style="margin-bottom: 0;">
+                        <div style="display: flex; align-items: center; justify-content: space-between;">
+                            <span>
+                                {% if comment.user.userprofile.nick_name %}
+                                    <strong>{{ comment.user.userprofile.nick_name }}</strong>
+                                {% else %}
+                                    <strong>{{ comment.user }}</strong>
+                                {% endif %}
+                                <small>@{{ comment.user }}</small>
+                            </span>
+                        </div>
                     </p>
                     <p class="comment-content">
                         {{ comment.content|safe|linebreaks }}
                     </p>
-                    <small style="color: #a0a0a0;">{{ comment.add_date }}</small>
-                </div>
-                <nav class="level is-mobile">
-                    <div class="level-left">
-                        <a class="level-item" aria-label="ewew">
-                            <span class="icon is-small">
-                                <i class="fas fa-reply" aria-hidden="true"></i>
-                            </span>
-                        </a>
-                        <a class="level-item reply-button" aria-label="reply" data-username="{{ comment.user.username }}">
-                            <span class="icon is-small">
-                                <i class="fas fa-retweet" aria-hidden="true">
-                                    <img src="{% static 'blog/images/reply.png' %}" style="margin-top:5px">
-                                </i>
-                            </span>
-                        </a>
-                        <span class="level-left">
+                    <!-- 将时间和图标放在同一行 -->
+                    <div style="display: flex; align-items: center;">
+                        <small style="color: #a0a0a0;">{{ comment.add_date }}</small>
+                        <nav class="level is-mobile" style="display: flex; align-items: center;">
+                            <a class="level-item" aria-label="ewew">
+                                <span class="icon is-small">
+                                    <i class="fas fa-reply" aria-hidden="true"></i>
+                                </span>
+                            </a>
+                            <a class="level-item reply-button" aria-label="reply" data-username="{{ comment.user.username }}">
+                                <span class="icon is-small">
+                                    <i class="fas fa-retweet" aria-hidden="true">
+                                        <img src="{% static 'blog/images/reply.png' %}" style="margin-top:5px">
+                                    </i>
+                                </span>
+                            </a>
                             <a class="level-item" aria-label="like">
                                 <span class="icon is-small">
                                     <i class="fas fa-heart" aria-hidden="true">
@@ -97,11 +98,11 @@
                                 </span>
                             </a>
                             {% if comment.likes %}
-                                <span style="vertical-align: bottom;">{{ comment.likes }}</span>
+                                <span style="vertical-align: bottom; margin-left: 5px;">{{ comment.likes }}</span>
                             {% endif %}
-                        </span>
+                        </nav>
                     </div>
-                </nav>
+                </div>
             </div>
         </article>
         <!-- 隐藏回复表单，初始状态为隐藏 -->
@@ -122,13 +123,10 @@
             </form>
         </div>
         <!-- 显示评论的回复 -->
-        <div class="media" style=
-           "display: flex;
-            flex-direction: column;
-            margin-left: 80px;">
+        <div class="media-container" style="display: flex; flex-direction: column; margin-left: 80px;">
             {% for reply in comment.replies.all %}
-                <article class="media">
-                    <div class="media-left">
+                <article class="media" style="display: flex; margin-bottom: 10px;">
+                    <div class="media-middle" style="margin-top:17px">
                         <figure class="image is-32x32">
                             {% if reply.user.userprofile.image %}
                                 <img class="is-rounded" src="{{ MEDIA_URL }}{{ reply.user.userprofile.image.url }}" alt="">
@@ -137,30 +135,32 @@
                             {% endif %}
                         </figure>
                     </div>
-                    <div class="media-content">
+                    <div class="media-content" style="flex: 1; margin-left: 10px;">
                         <div class="content">
                             <p>
-                                <strong>{{ reply.user }}</strong>
-                                <br>
-                                {{ reply.content|safe|linebreaks }}
-                                <small style="color: #a0a0a0;">{{ reply.add_date }}</small>
+                                <div style="display: flex; align-items: center;">
+                                    <strong style="margin-right: 10px;">{{ reply.user }}</strong>
+                                    <span style="flex: 1;">
+                                        {{ reply.content|safe|linebreaks }}
+                                    </span>
+                                </div>
                             </p>
-                        </div>
-                        <nav class="level is-mobile">
-                            <div class="level-left">
-                                <a class="level-item" aria-label="ewew">
-                                    <span class="icon is-small">
-                                        <i class="fas fa-reply" aria-hidden="true"></i>
-                                    </span>
-                                </a>
-                                <a class="level-item" aria-label="reply">
-                                    <span class="icon is-small">
-                                        <i class="fas fa-retweet" aria-hidden="true">
-                                            <img src="{% static 'blog/images/reply.png' %}" style="margin-top:5px">
-                                        </i>
-                                    </span>
-                                </a>
-                                <span class="level-left">
+                            <!-- 时间和图标放在同一行 -->
+                            <div style="display: flex; align-items: center;">
+                                <small style="color: #a0a0a0;">{{ reply.add_date }}</small>
+                                <nav class="level is-mobile" style="display: flex; align-items: center;">
+                                    <a class="level-item" aria-label="ewew">
+                                        <span class="icon is-small">
+                                            <i class="fas fa-reply" aria-hidden="true"></i>
+                                        </span>
+                                    </a>
+                                    <a class="level-item" aria-label="reply">
+                                        <span class="icon is-small">
+                                            <i class="fas fa-retweet" aria-hidden="true">
+                                                <img src="{% static 'blog/images/reply.png' %}" style="margin-top:5px">
+                                            </i>
+                                        </span>
+                                    </a>
                                     <a class="level-item" aria-label="like">
                                         <span class="icon is-small">
                                             <i class="fas fa-heart" aria-hidden="true">
@@ -169,11 +169,11 @@
                                         </span>
                                     </a>
                                     {% if reply.likes %}
-                                        <span style="vertical-align: bottom;">{{ reply.likes }}</span>
+                                        <span style="vertical-align: bottom; margin-left: 5px;">{{ reply.likes }}</span>
                                     {% endif %}
-                                </span>
+                                </nav>
                             </div>
-                        </nav>
+                        </div>
                     </div>
                 </article>
             {% endfor %}
