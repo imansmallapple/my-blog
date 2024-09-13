@@ -32,7 +32,10 @@ def category_list(request, category_id):
 
 def article_detail(request, article_id):
     article = get_object_or_404(Article, id=article_id)
-    comments = article.comments.filter(parent__isnull=True)  # 获取顶级评论（没有父评论）
+
+    # 获取顶级评论并预取每个评论的回复
+    comments = article.comments.filter(parent__isnull=True).prefetch_related('replies').order_by('add_date')
+
     # ordered by article id
     prev_article = Article.objects.filter(id__lt=article_id).last()
     next_article = Article.objects.filter(id__gt=article_id).first()

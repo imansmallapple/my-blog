@@ -2,15 +2,15 @@
 {% load static %}
 {% block page-content %}
 <div class="box">
-<h1 class="is-size-5 has-text-weight-bold">
-    <a>{{article.title}}</a>
-</h1>
+    <h1 class="is-size-5 has-text-weight-bold">
+        <a>{{ article.title }}</a>
+    </h1>
     <div class="is-size-7 has-text-grey-light pt-1 pb-1">
-        <span class="mr-6">Author: {{article.owner}}</span>
-        <span> Publish Date: {{article.add_date}}</span>
+        <span class="mr-6">Author: {{ article.owner }}</span>
+        <span> Publish Date: {{ article.add_date }}</span>
     </div>
     <div class="content">
-        {{article.content|safe}}
+        {{ article.content|safe }}
     </div>
 </div>
 
@@ -18,13 +18,13 @@
     <div class="messages" style="margin-bottom:10px">
         {% for message in messages %}
             <article class="message is-danger">
-              <div class="message-header">
-                <p>Message Box</p>
-                <button class="delete" aria-label="delete"></button>
-              </div>
-              <div class="message-body">
-                {{ message }}
-              </div>
+                <div class="message-header">
+                    <p>Message Box</p>
+                    <button class="delete" aria-label="delete"></button>
+                </div>
+                <div class="message-body">
+                    {{ message }}
+                </div>
             </article>
         {% endfor %}
     </div>
@@ -34,153 +34,179 @@
     {% csrf_token %}
     <div class="field">
         <div class="control">
-            {{ form.content }}  <!-- 自动渲染表单字段 -->
+            {{ form.content }} <!-- 自动渲染表单字段 -->
         </div>
     </div>
     <div class="field is-grouped">
-        <div class="control" style=" margin-left: auto;" >
+        <div class="control" style="margin-left: auto;">
             <button class="button is-link" type="submit">Publish</button>
         </div>
-    </div><!-- 在模板的底部添加JavaScript -->
+    </div>
 </form>
 <br/>
 {% if user.is_authenticated %}
 <div class="box">
     {% for comment in comments %}
-      <article class="media">
-        <div class="media-left">
-          <figure class="image is-64x64">
-            {% if comment.user.userprofile.image %}
-                <img class=" is-rounded" src="{{ MEDIA_URL }}{{ user.userprofile.image.url }}" alt="" srcset="">
-            {% else %}
-                <img class=" is-rounded" src="{% static 'users/images/avatar.png' %}" alt="" srcset="">
-            {% endif %}
-          </figure>
-        </div>
-        <div class="media-content">
-            <div class="content">
-              <p style="display: flex; justify-content: space-between; align-items: center;">
-                <span>
-                    {% if comment.user.userprofile.nick_name %}
-                      <strong>{{ comment.user.userprofile.nick_name }}</strong>
+        <article class="media">
+            <div class="media-left">
+                <figure class="image is-64x64">
+                    {% if comment.user.userprofile.image %}
+                        <img class="is-rounded" src="{{ MEDIA_URL }}{{ comment.user.userprofile.image.url }}" alt="">
                     {% else %}
-                      <strong>{{ comment.user }}</strong>
+                        <img class="is-rounded" src="{% static 'users/images/avatar.png' %}" alt="">
                     {% endif %}
-                  <small>@{{ comment.user }}</small>
-                </span>
-              </p>
-                <p class="comment-content">
-                    {{ comment.content|safe|linebreaks }}
-                </p>
-              <small style="color: #a0a0a0;">{{ comment.add_date }}</small>
+                </figure>
             </div>
-          <nav class="level is-mobile">
-            <div class="level-left">
-              <a class="level-item" aria-label="ewew">
-                <span class="icon is-small">
-                  <i class="fas fa-reply" aria-hidden="true"></i>
-                </span>
-              </a>
-              <a class="level-item reply-button" aria-label="reply">
-                <span class="icon is-small">
-                  <i class="fas fa-retweet" aria-hidden="true">
-                    <img src="{% static 'blog/images/reply.png' %}" style="margin-top:5px">
-                  </i>
-                </span>
-              </a>
-                <span class="level-left">
-                  <a class="level-item" aria-label="like">
-                    <span class="icon is-small">
-                      <i class="fas fa-heart" aria-hidden="true">
-                        <img src="{% static 'blog/images/like.png' %}" style="margin-top:3px">
-                      </i>
-                    </span>
-                  </a>
-                    {% if comment.likes == 0 %}
-                    {% else %}
-                      <span style="vertical-align: bottom;">{{ comment.likes }}</span>
-                    {% endif %}
-                </span>
-
-            </div>
-          </nav>
-        </div>
-      </article>
-            <!-- 隐藏回复表单，初始状态为隐藏 -->
-            <div class="media-content reply-form" style="display: none;">
-              <form method="post">
-                  {% csrf_token %}
-                  <input type="hidden" name="parent_id" value="{{ comment.id }}">
-                  <div class="field">
-                      <div class="control">
-                          <textarea name="content" class="textarea" placeholder="Reply to this comment"></textarea>
-                      </div>
-                  </div>
-                  <div class="field is-grouped">
-                      <div class="control" style=" margin-left: auto;">
-                          <button class="button is-link" type="submit">Reply</button>
-                      </div>
-                  </div>
-              </form>
-            </div>
-
-            <!-- 显示评论的回复 -->
-            <div class="media">
-                {% for reply in comment.replies.all %}
-                    <article class="media">
-                        <div class="media-left">
-                          <figure class="image is-48x48">
-                            {% if reply.user.userprofile.image %}
-                                <img class=" is-rounded" src="{{ MEDIA_URL }}{{ reply.user.userprofile.image.url }}" alt="">
+            <div class="media-content">
+                <div class="content">
+                    <p style="display: flex; justify-content: space-between; align-items: center;">
+                        <span>
+                            {% if comment.user.userprofile.nick_name %}
+                                <strong>{{ comment.user.userprofile.nick_name }}</strong>
                             {% else %}
-                                <img class=" is-rounded" src="{% static 'users/images/avatar.png' %}" alt="">
+                                <strong>{{ comment.user }}</strong>
                             {% endif %}
-                          </figure>
-                        </div>
-                        <div class="media-content">
-                            <div class="content">
-                              <p>
+                            <small>@{{ comment.user }}</small>
+                        </span>
+                    </p>
+                    <p class="comment-content">
+                        {{ comment.content|safe|linebreaks }}
+                    </p>
+                    <small style="color: #a0a0a0;">{{ comment.add_date }}</small>
+                </div>
+                <nav class="level is-mobile">
+                    <div class="level-left">
+                        <a class="level-item" aria-label="ewew">
+                            <span class="icon is-small">
+                                <i class="fas fa-reply" aria-hidden="true"></i>
+                            </span>
+                        </a>
+                        <a class="level-item reply-button" aria-label="reply" data-username="{{ comment.user.username }}">
+                            <span class="icon is-small">
+                                <i class="fas fa-retweet" aria-hidden="true">
+                                    <img src="{% static 'blog/images/reply.png' %}" style="margin-top:5px">
+                                </i>
+                            </span>
+                        </a>
+                        <span class="level-left">
+                            <a class="level-item" aria-label="like">
+                                <span class="icon is-small">
+                                    <i class="fas fa-heart" aria-hidden="true">
+                                        <img src="{% static 'blog/images/like.png' %}" style="margin-top:3px">
+                                    </i>
+                                </span>
+                            </a>
+                            {% if comment.likes %}
+                                <span style="vertical-align: bottom;">{{ comment.likes }}</span>
+                            {% endif %}
+                        </span>
+                    </div>
+                </nav>
+            </div>
+        </article>
+        <!-- 隐藏回复表单，初始状态为隐藏 -->
+        <div class="media-content reply-form" style="display: none;">
+            <form method="post">
+                {% csrf_token %}
+                <input type="hidden" name="parent_id" value="{{ comment.id }}">
+                <div class="field">
+                    <div class="control">
+                        <textarea name="content" class="textarea" placeholder="Reply to @{{ comment.user.username }}"></textarea>
+                    </div>
+                </div>
+                <div class="field is-grouped">
+                    <div class="control" style="margin-left: auto;">
+                        <button class="button is-link" type="submit">Reply</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <!-- 显示评论的回复 -->
+        <div class="media" style=
+           "display: flex;
+            flex-direction: column;
+            margin-left: 80px;">
+            {% for reply in comment.replies.all %}
+                <article class="media">
+                    <div class="media-left">
+                        <figure class="image is-32x32">
+                            {% if reply.user.userprofile.image %}
+                                <img class="is-rounded" src="{{ MEDIA_URL }}{{ reply.user.userprofile.image.url }}" alt="">
+                            {% else %}
+                                <img class="is-rounded" src="{% static 'users/images/avatar.png' %}" alt="">
+                            {% endif %}
+                        </figure>
+                    </div>
+                    <div class="media-content">
+                        <div class="content">
+                            <p>
                                 <strong>{{ reply.user }}</strong>
                                 <br>
                                 {{ reply.content|safe|linebreaks }}
-                                <br>
-                                <small>{{ reply.add_date }}</small>
-                              </p>
-                            </div>
+                                <small style="color: #a0a0a0;">{{ reply.add_date }}</small>
+                            </p>
                         </div>
-                    </article>
-                {% endfor %}
-            </div>
-    {%endfor%}
-    </div>
-    {% else %}
-    <div class="box">
-            <div class="level">
-            <div class="level-left">
-               After login can view all comments.
-            </div>
+                        <nav class="level is-mobile">
+                            <div class="level-left">
+                                <a class="level-item" aria-label="ewew">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-reply" aria-hidden="true"></i>
+                                    </span>
+                                </a>
+                                <a class="level-item" aria-label="reply">
+                                    <span class="icon is-small">
+                                        <i class="fas fa-retweet" aria-hidden="true">
+                                            <img src="{% static 'blog/images/reply.png' %}" style="margin-top:5px">
+                                        </i>
+                                    </span>
+                                </a>
+                                <span class="level-left">
+                                    <a class="level-item" aria-label="like">
+                                        <span class="icon is-small">
+                                            <i class="fas fa-heart" aria-hidden="true">
+                                                <img src="{% static 'blog/images/like.png' %}" style="margin-top:3px">
+                                            </i>
+                                        </span>
+                                    </a>
+                                    {% if reply.likes %}
+                                        <span style="vertical-align: bottom;">{{ reply.likes }}</span>
+                                    {% endif %}
+                                </span>
+                            </div>
+                        </nav>
+                    </div>
+                </article>
+            {% endfor %}
+        </div>
+    {% endfor %}
+</div>
+{% else %}
+<div class="box">
+    <div class="level">
+        <div class="level-left">
+            After login can view all comments.
         </div>
     </div>
-    {% endif %}
+</div>
+{% endif %}
 
 <div class="box">
-        <div class="level">
+    <div class="level">
         <div class="level-left">
-
             {% if prev_article %}
-            <span>Last Article:</span>
-            <a href="{% url 'blog:article_detail' prev_article.id %}" class="level-item">{{ prev_article.title }}</a>
+                <span>Last Article:</span>
+                <a href="{% url 'blog:article_detail' prev_article.id %}" class="level-item">{{ prev_article.title }}</a>
             {% else %}
-            <span class="has-text-danger-dark is-size-7">Not exist last one</span>
+                <span class="has-text-danger-dark is-size-7">Not exist last one</span>
             {% endif %}
         </div>
         <div class="level-right">
-             {% if next_article %}
-            <span>Next Article:</span>
-            <a href="{% url 'blog:article_detail' next_article.id %}" class="level-item">{{ next_article.title }}</a>
-             {% else %}
-            <span class="has-text-danger-dark is-size-7">Already last one</span>
-             {% endif %}
+            {% if next_article %}
+                <span>Next Article:</span>
+                <a href="{% url 'blog:article_detail' next_article.id %}" class="level-item">{{ next_article.title }}</a>
+            {% else %}
+                <span class="has-text-danger-dark is-size-7">Already last one</span>
+            {% endif %}
         </div>
     </div>
 </div>
@@ -237,5 +263,4 @@
         });
     });
 </script>
-
 {% endblock %}
