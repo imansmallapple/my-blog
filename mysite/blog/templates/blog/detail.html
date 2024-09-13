@@ -1,4 +1,5 @@
 {% extends 'blog/base.html' %}
+{% load static %}
 {% block page-content %}
 <div class="box">
 <h1 class="is-size-5 has-text-weight-bold">
@@ -10,6 +11,80 @@
     </div>
     <div class="content">
         {{article.content|safe}}
+    </div>
+</div>
+
+<textarea class="textarea" placeholder="leave your comment here.">
+</textarea>
+<div class="box">
+{% for comment in comments %}
+  <article class="media">
+    <div class="media-left">
+      <figure class="image is-64x64">
+        {% if comment.user.userprofile.image %}
+            <img class=" is-rounded" src="{{ MEDIA_URL }}{{ user.userprofile.image.url }}" alt="" srcset="">
+        {% else %}
+            <img class=" is-rounded" src="{% static 'users/images/avatar.png' %}" alt="" srcset="">
+        {% endif %}
+      </figure>
+    </div>
+    <div class="media-content">
+<div class="content">
+  <p style="display: flex; justify-content: space-between; align-items: center;">
+    <span>
+        {% if comment.user.userprofile.nick_name %}
+          <strong>{{ comment.user.userprofile.nick_name }}</strong>
+        {% else %}
+          <strong>{{ comment.user }}</strong>
+        {% endif %}
+      <small>@{{ comment.user }}</small>
+    </span>
+  </p>
+  <p>
+        {{comment.content|safe}}
+  </p>
+  <small style="color: #a0a0a0;">{{ comment.add_date }}</small>
+</div>
+
+
+
+      <nav class="level is-mobile">
+        <div class="level-left">
+          <a class="level-item" aria-label="reply">
+            <span class="icon is-small">
+              <i class="fas fa-reply" aria-hidden="true"></i>
+            </span>
+          </a>
+          <a class="level-item" aria-label="retweet">
+            <span class="icon is-small">
+              <i class="fas fa-retweet" aria-hidden="true"></i>
+            </span>
+          </a>
+          <a class="level-item" aria-label="like">
+            <span class="icon is-small">
+              <i class="fas fa-heart" aria-hidden="true"></i>
+            </span>
+          </a>
+        </div>
+      </nav>
+    </div>
+  </article>
+{%endfor%}
+</div>
+
+<div class="box">
+    comment area
+    <div class="content">
+        {% for comment in comments %}
+        {% if user.userprofile.image %}
+            <img class=" is-rounded" src="{{ MEDIA_URL }}{{ user.userprofile.image.url }}" alt="" srcset="">
+        {% else %}
+            <img class=" is-rounded" src="{% static 'users/images/avatar.png' %}" alt="" srcset="">
+        {% endif %}
+        <span class="mr-6">Author: {{ comment.user }}</span>
+        <span style="margin-right: 50px">Date: {{ comment.add_date }}</span>
+        {{comment.content|safe}}
+        {% endfor %}
     </div>
 </div>
 

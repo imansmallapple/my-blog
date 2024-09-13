@@ -55,6 +55,8 @@ class Comment(models.Model):
     add_date = models.DateTimeField(auto_now_add=True, verbose_name='Created Time')  # 评论创建时间
     mod_date = models.DateTimeField(auto_now=True, verbose_name='Updated Time')  # 评论更新时间
     is_hot = models.BooleanField(default=False, verbose_name='Is Popular')
+    likes = models.IntegerField(default=0, verbose_name='Likes')
+    dislikes = models.IntegerField(default=0, verbose_name='Dislikes')
 
     class Meta:
         verbose_name = 'Comment'
