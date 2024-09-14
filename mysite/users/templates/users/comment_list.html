@@ -14,14 +14,21 @@
         .button-container .button {
             margin: 0; /* 去掉按钮的默认外边距 */
         }
+
+        .replies-list {
+            margin-top: 10px;
+            padding-left: 20px;
+            border-left: 2px solid #ddd;
+        }
     </style>
-{% if page_obj.object_list %}
+
+    {% if page_obj.object_list %}
         <ul>
             {% for comment in page_obj.object_list %}
             <li>
                 <div class="box" style="margin-bottom: 10px">
                     <div class="content-container" style="display: flex; justify-content: space-between; align-items: center;">
-                        <!-- 左侧的文章信息 -->
+                        <!-- 左侧的评论信息 -->
                         <div class="comment-info">
                             {% if comment.parent %}
                             <span>Replied to: {{ comment.parent|safe }}</span>
@@ -36,12 +43,15 @@
                             </div>
                         </div>
 
-                        <!-- 右侧的按钮，点击后跳转到 edit_article 页面并传递文章ID -->
+                        <!-- 右侧的按钮，点击后显示评论的所有回复 -->
                         <div class="button-container">
-                            <a href="" class="button is-link is-outlined">Replies</a>
+                            <a href="javascript:void(0);" class="button is-link is-outlined reply-button" data-comment-id="{{ comment.id }}">Replies</a>
                             <a href="{% url 'blog:delete_comment' comment.id %}" class="button is-danger is-outlined">Delete</a>
                         </div>
                     </div>
+
+                    <!-- 回复列表，默认隐藏，点击“Replies”按钮时显示 -->
+                    <div class="replies-list" id="replies-{{ comment.id }}" style="display: none;"></div>
                 </div>
             </li>
             {% endfor %}
@@ -69,6 +79,47 @@
         </nav>
 
     {% else %}
-        <p>You don't have any draft.</p>
+        <p>You don't have any comments.</p>
     {% endif %}
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // 监听所有的“Replies”按钮
+            document.querySelectorAll('.reply-button').forEach(function(button) {
+                button.addEventListener('click', function() {
+                    const commentId = this.getAttribute('data-comment-id');
+                    const repliesContainer = document.getElementById('replies-' + commentId);
+
+                    // 如果已经加载了回复，则切换显示/隐藏
+                    if (repliesContainer.innerHTML !== '') {
+                        repliesContainer.style.display = repliesContainer.style.display === 'none' ? 'block' : 'none';
+                        return;
+                    }
+
+                    // 发起AJAX请求获取回复
+                    fetch(`/get_comment_replies/${commentId}/`)
+                        .then(response => response.json())
+                        .then(data => {
+                            let repliesHtml = ''; // 确保在外部初始化
+
+                            if (data.replies.length > 0) {
+                                repliesHtml = '<ul>';
+                                data.replies.forEach(reply => {
+                                    repliesHtml += `<li><strong>${reply.user}</strong>: ${reply.content} <em>(${reply.add_date})</em></li>`;
+                                });
+                                repliesHtml += '</ul>';
+                            } else {
+                                repliesHtml = '<p>No replies yet.</p>';
+                            }
+
+                            repliesContainer.innerHTML = repliesHtml;
+                            repliesContainer.style.display = 'block';
+                        })
+                        .catch(error => {
+                            console.error('Error:', error);
+                        });
+                });
+            });
+        });
+    </script>
 {% endblock %}

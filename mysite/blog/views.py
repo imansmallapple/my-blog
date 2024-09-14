@@ -221,3 +221,20 @@ def comment_list(request):
     page_obj = paginator.get_page(page_number)
     context = {'page_obj': page_obj}
     return render(request, 'users/comment_list.html', context)
+
+
+@login_required(login_url='users:login')
+def get_comment_replies(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id)
+    replies = comment.replies.all()  # 获取所有回复
+    reply_data = []
+
+    # 构造回复数据
+    for reply in replies:
+        reply_data.append({
+            'user': reply.user.username,
+            'content': reply.content,
+            'add_date': reply.add_date.strftime('%Y-%m-%d %H:%M'),
+        })
+
+    return JsonResponse({'replies': reply_data})
