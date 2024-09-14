@@ -16,4 +16,6 @@ urlpatterns = [
     path('activate_account/', views.register, name='activate_account'),
     path('invalid_link/', views.active_user, name='invalid_link'),
     path('pending_activation/', views.register, name='pending_activation'),
+    path('message_profile/', views.message_profile, name='message_profile'),
+    path('followers/', views.followers, name='followers'),
 ]

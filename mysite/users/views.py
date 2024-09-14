@@ -171,3 +171,11 @@ def edit_users(request):
             form = UserForm(instance=user)
             user_profile_form = UserProfileForm()  # 显示空表单
     return render(request, 'users/edit_users.html', locals())
+
+
+def message_profile(request):
+    return render(request, 'users/message_profile.html')
+
+
+def followers(request):
+    return render(request, 'users/followers.html')
