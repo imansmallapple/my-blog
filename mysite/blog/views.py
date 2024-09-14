@@ -198,3 +198,26 @@ def delete_article(request, article_id):
     return render(request, 'users/delete_article.html', context)
 
 
+@login_required(login_url='users:login')
+def delete_comment(request, comment_id):
+    comment = get_object_or_404(Comment, id=comment_id, user=request.user)
+    if request.method == 'POST':
+        comment.delete()
+        messages.success(request, 'Chosen comment was deleted successfully.')
+        return redirect('blog:comment_list')  # 删除成功后重定向到草稿列表页面
+    context = {'comment': comment}
+    return render(request, 'users/delete_comment.html', context)
+
+
+@login_required(login_url='users:login')
+def comment_list(request):
+    comments = Comment.objects.filter(user=request.user)
+    # if request.method == 'POST':
+    #     comment.delete()
+    #     messages.success(request, 'Chosen comment was deleted successfully.')
+    #     return redirect('blog:comment_list')  # 删除成功后重定向到草稿列表页面
+    paginator = Paginator(comments, 6)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context = {'page_obj': page_obj}
+    return render(request, 'users/comment_list.html', context)
