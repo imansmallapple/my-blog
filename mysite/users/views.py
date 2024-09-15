@@ -8,6 +8,9 @@ from .models import EmailVerifyRecord, UserProfile, PendingUser
 from utils.email_send import send_register_email
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.hashers import make_password
+from django.shortcuts import get_object_or_404
+from django.http import JsonResponse
+
 # Create your views here.
 
 
@@ -192,12 +195,23 @@ def followers(request, username):
 
 @login_required
 def my_followers(request):
-    user = request.user
-    follower_list = user.userprofile.followers.all()
+    userprofile = request.user.userprofile
+    followers = userprofile.followers.all()
+
+    # 获取当前用户的关注状态
+    followers_data = []
+    for follower in followers:
+        is_following = userprofile.following.filter(id=follower.id).exists()
+        followers_data.append({
+            'username': follower.owner.username,  # 使用 owner 而不是 user
+            'image_url': follower.image.url,
+            'gender': follower.gender,
+            'is_following': is_following
+        })
 
     context = {
-        'user': user,
-        'followers': follower_list,
+        'user': request.user,  # 提供当前用户的信息
+        'followers': followers_data,  # 提供粉丝列表及其关注状态
     }
 
     return render(request, 'users/followers.html', context)
@@ -205,16 +219,34 @@ def my_followers(request):
 
 @login_required
 def follow_unfollow(request, username):
-    target_user = get_object_or_404(User, username=username)
-    userprofile = request.user.userprofile
+    if request.method == 'POST':
+        import json
+        data = json.loads(request.body)
+        action = data.get('action')
 
-    if userprofile.following.filter(id=target_user.userprofile.id).exists():
-        # 如果已经关注，取消关注
-        userprofile.following.remove(target_user.userprofile)
-        messages.success(request, f'You have unfollowed {target_user.username}')
-    else:
-        # 否则，添加到关注列表
-        userprofile.following.add(target_user.userprofile)
-        messages.success(request, f'You are now following {target_user.username}')
+        target_user = get_object_or_404(User, username=username)
+        userprofile = request.user.userprofile
 
-    return redirect('followers_list', username=target_user.username)
+        if action == 'follow':
+            if not userprofile.following.filter(id=target_user.userprofile.id).exists():
+                userprofile.following.add(target_user.userprofile)
+                success = True
+                message = f'You are now following {target_user.username}'
+            else:
+                success = False
+                message = f'You are already following {target_user.username}'
+        elif action == 'unfollow':
+            if userprofile.following.filter(id=target_user.userprofile.id).exists():
+                userprofile.following.remove(target_user.userprofile)
+                success = True
+                message = f'You have unfollowed {target_user.username}'
+            else:
+                success = False
+                message = f'You are not following {target_user.username}'
+        else:
+            return JsonResponse({'success': False, 'message': 'Invalid action'}, status=400)
+
+        return JsonResponse({'success': success, 'message': message})
+
+    return JsonResponse({'success': False, 'message': 'Invalid request method'}, status=400)
+

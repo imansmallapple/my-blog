@@ -45,17 +45,59 @@
     {% for follower in followers %}
     <li class="follower-item">
         <figure class="image is-24x24">
-            <img class="is-rounded" src="{{ follower.image.url }}" alt="" srcset="">
+            <img class="is-rounded" src="{{ follower.image_url }}" alt="{{ follower.username }}">
         </figure>
         <div class="follower-info">
-            <a href="">{{ follower.owner.username }}</a>
-            <a href="">{{ follower.gender }}</a>
+            <a href="">{{ follower.username }}</a>
+            {{ follower.gender }}
         </div>
-            <button>Unfollow</button>
+            <button class="follow-btn button is-info" data-username="{{ follower.username }}">
+                {% if follower.is_following %}
+                    Unfollow
+                {% else %}
+                    Follow
+                {% endif %}
+            </button>
     </li>
     {% endfor %}
 </ul>
 {% else %}
     <p>{{ target_user.username }} has no followers yet.</p>
 {% endif %}
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const buttons = document.querySelectorAll('.follow-btn');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', function() {
+                const username = this.dataset.username;
+                const action = this.textContent.trim() === 'Follow' ? 'follow' : 'unfollow';
+
+                fetch(`/users/follow/${username}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({ username: username, action: action })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        this.textContent = action === 'follow' ? 'Unfollow' : 'Follow';
+                        alert(data.message); // Optional: Show success message
+                    } else {
+                        alert(data.message); // Show error message
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    });
+</script>
+
+
+
 {% endblock %}
+
