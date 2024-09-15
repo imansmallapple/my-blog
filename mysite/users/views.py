@@ -255,10 +255,8 @@ def follow_unfollow(request, username):
 def other_user_profile(request, username):
     # 获取选中的用户
     selected_user = get_object_or_404(User, username=username)
-
     # 判断当前用户是否已经关注了这个用户
     is_following = request.user.userprofile.following.filter(id=selected_user.id).exists()
-
     # 将 selected_user 和 is_following 传递给模板
     return render(request, 'users/other_user_profile.html', {
         'selected_user': selected_user,

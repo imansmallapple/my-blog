@@ -53,7 +53,7 @@
                 </div>
                 <button class="follow-btn button is-info" data-username="{{ selected_user.username }}">
                     <span>
-                        {% if selected_user.userprofile.is_following %}
+                        {% if is_following %}
                             Unfollow
                         {% else %}
                             Follow
@@ -151,7 +151,7 @@
 
 <div class="columns" style="padding:1rem 0; ">
     <div class="column is-2">
-        <p>Personal Introduction</p>
+        <p>Introduction</p>
     </div>
     <div class="column">
         <div class="content">
@@ -184,7 +184,7 @@
                 .then(response => response.json())
                 .then(data => {
                     if (data.success) {
-                        this.textContent = action === 'follow' ? 'Unfollow' : 'Follow';
+                        this.querySelector('span').textContent = action === 'follow' ? 'Unfollow' : 'Follow';
                         alert(data.message); // Optional: Show success message
                     } else {
                         alert(data.message); // Show error message
