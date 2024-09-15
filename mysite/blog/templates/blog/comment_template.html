@@ -63,6 +63,7 @@
         height: auto; /* 保持图片纵横比 */
         display: block; /* 去除图片底部的空白 */
     }
+
 </style>
 
 <!-- 主评论或回复 -->
@@ -78,11 +79,12 @@
     </div>
     <div class="media-content comment-content">
         <div class="comment-header">
-            <strong>{{ comment.user }}</strong>
-                            <!-- 显示父评论（或父回复） -->
+            <a href="{% url 'users:other_user_profile' comment.user.username %}" style="color:#61666D">
+                <strong>{{ comment.user }}</strong>
+            </a>            <!-- 显示父评论（或父回复） -->
         {% if comment.parent %}
             <div class="parent-comment" style="margin-left: 10px; solid #ddd;">
-                <p>replies<strong> @{{ comment.parent.user }}</strong>:</p>
+                <p>replies<a href="{% url 'users:other_user_profile' comment.parent.user.username %}"> @{{ comment.parent.user }}</a>:</p>
             </div>
             <p style="margin-left:5px">{{ comment.content|safe|linebreaks }}</p>
         {% endif %}

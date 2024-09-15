@@ -227,6 +227,10 @@ def follow_unfollow(request, username):
         target_user = get_object_or_404(User, username=username)
         userprofile = request.user.userprofile
 
+        # Check if the user is trying to follow themselves
+        if request.user == target_user:
+            return JsonResponse({'success': False, 'message': 'You cannot follow yourself'}, status=400)
+
         if action == 'follow':
             if not userprofile.following.filter(id=target_user.userprofile.id).exists():
                 userprofile.following.add(target_user.userprofile)
