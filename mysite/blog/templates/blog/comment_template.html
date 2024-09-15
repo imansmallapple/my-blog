@@ -69,6 +69,7 @@
 <!-- 主评论或回复 -->
 <article class="media {% if comment.parent %}reply{% else %}comment{% endif %}">
     <div class="media-left">
+        <a href="{% url 'users:other_user_profile' comment.user.username %}">
         <figure class="image">
             {% if comment.user.userprofile.image %}
                 <img class="is-rounded" src="{{ MEDIA_URL }}{{ comment.user.userprofile.image.url }}" alt="User Avatar">
@@ -76,6 +77,8 @@
                 <img class="is-rounded" src="{% static 'users/images/avatar.png' %}" alt="Default Avatar">
             {% endif %}
         </figure>
+        </a>
+
     </div>
     <div class="media-content comment-content">
         <div class="comment-header">
