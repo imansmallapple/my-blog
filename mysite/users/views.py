@@ -180,7 +180,7 @@ def message_profile(request):
     return render(request, 'users/message_profile.html')
 
 
-@login_required
+@login_required(login_url='users:login')
 def followers(request, username):
     target_user = get_object_or_404(User, username=username)
     follower_list = target_user.userprofile.followers.all()
@@ -193,7 +193,7 @@ def followers(request, username):
     return render(request, 'users/followers.html', context)
 
 
-@login_required
+@login_required(login_url='users:login')
 def my_followers(request):
     userprofile = request.user.userprofile
     followers = userprofile.followers.all()
@@ -205,7 +205,7 @@ def my_followers(request):
         followers_data.append({
             'username': follower.owner.username,  # 使用 owner 而不是 user
             'image_url': follower.image.url,
-            'gender': follower.gender,
+            'signature': follower.signature,
             'is_following': is_following
         })
 
@@ -217,7 +217,7 @@ def my_followers(request):
     return render(request, 'users/followers.html', context)
 
 
-@login_required
+@login_required(login_url='users:login')
 def follow_unfollow(request, username):
     if request.method == 'POST':
         import json
@@ -250,3 +250,17 @@ def follow_unfollow(request, username):
 
     return JsonResponse({'success': False, 'message': 'Invalid request method'}, status=400)
 
+
+@login_required(login_url='users:login')
+def other_user_profile(request, username):
+    # 获取选中的用户
+    selected_user = get_object_or_404(User, username=username)
+
+    # 判断当前用户是否已经关注了这个用户
+    is_following = request.user.userprofile.following.filter(id=selected_user.id).exists()
+
+    # 将 selected_user 和 is_following 传递给模板
+    return render(request, 'users/other_user_profile.html', {
+        'selected_user': selected_user,
+        'is_following': is_following
+    })

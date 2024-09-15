@@ -1,0 +1,198 @@
+{% extends 'users/message_profile.html' %}
+{% load static %}
+
+{% block title %}
+<li class="is-active"><a>User Details</a></li>
+{% endblock %}
+
+{% block content %}
+<style>
+.profile-details {
+    display: flex;
+    flex-direction: column;
+}
+
+.profile-header {
+    display: flex;
+    align-items: center; /* 垂直居中对齐 */
+    justify-content: space-between; /* 在容器中分布内容 */
+}
+
+.username-container {
+    flex: 1; /* 占据可用空间 */
+}
+
+.follow-btn {
+    margin-left: 1rem; /* 为按钮添加间距 */
+}
+
+.follow-btn span {
+    display: block; /* 确保按钮内的文本对齐 */
+}
+</style>
+
+<div class="columns is-mobile" style="border-bottom: #ededed solid 1px; padding-bottom: 1rem">
+    <div class="column is-narrow">
+        <figure class="image is-96x96">
+            {% if selected_user.userprofile.image %}
+                <img class="is-rounded" src="{{ MEDIA_URL }}{{ selected_user.userprofile.image.url }}">
+            {% else %}
+                <img class="is-rounded" src="{% static 'users/images/avatar.png' %}">
+            {% endif %}
+        </figure>
+    </div>
+    <div class="column is-narrow">
+        <div class="profile-details" style="padding-top: 1.5rem;">
+            <div class="profile-header">
+                <div class="username-container">
+                    {% if selected_user.userprofile.nick_name %}
+                        <h1 class="title is-size-4">{{ selected_user.userprofile.nick_name }}</h1>
+                    {% else %}
+                        <h1 class="title is-size-4">{{ selected_user.username }}</h1>
+                    {% endif %}
+                </div>
+                <button class="follow-btn button is-info" data-username="{{ selected_user.username }}">
+                    <span>
+                        {% if selected_user.userprofile.is_following %}
+                            Unfollow
+                        {% else %}
+                            Follow
+                        {% endif %}
+                    </span>
+                </button>
+            </div>
+
+            {% if user.userprofile.signature %}
+                <p class="subtitle is-size-6">{{ selected_user.userprofile.signature }}</p>
+            {% else %}
+                <p class="subtitle is-size-6">Haven't set user signature</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+
+
+<div class="columns" style="padding:1rem 0; ">
+    <div class="column is-2">
+        <p>Personal Information</p>
+    </div>
+    <div class="column">
+        <div class="columns is-mobile" style="border-bottom: #ededed solid 1px">
+            <div class="column is-2">
+               <span class=" has-text-grey-light">Nickname</span>
+            </div>
+                <div class="column is-narrow">
+                    {% if selected_user.userprofile.nick_name %}
+                    <span class=" has-text-black-ter">{{ selected_user.userprofile.nick_name }}</span>
+                    {% else %}
+                    <span class=" has-text-black-ter">Haven't set nickname</span>
+                    {% endif %}
+
+                </div>
+            <!-- <div class="column has-text-right">
+                <a href="">更改类型</a>
+            </div> -->
+
+        </div>
+        <div class="columns is-mobile" style="border-bottom: #ededed solid 1px">
+            <div class="column is-2">
+               <span class=" has-text-grey-light">Gender</span>
+            </div>
+            <div class="column is-narrow">
+                {% if selected_user.userprofile %}
+                <span class=" has-text-black-ter">{{ selected_user.userprofile.get_gender_display }}</span>
+                {% else %}
+                <span class=" has-text-black-ter">Haven't set</span>
+                {% endif %}
+            </div>
+
+        </div>
+        <div class="columns is-mobile" style="border-bottom: #ededed solid 1px">
+            <div class="column is-2">
+               <span class=" has-text-grey-light">Email</span>
+            </div>
+            <div class="column is-narrow">
+                <span class=" has-text-black-ter">{{ selected_user.email }}</span>
+            </div>
+
+        </div>
+
+        <div class="columns is-mobile" style="border-bottom: #ededed solid 1px">
+            <div class="column is-2">
+               <span class=" has-text-grey-light">Birthday</span>
+            </div>
+            <div class="column is-narrow">
+                {% if selected_user.userprofile %}
+                <span class=" has-text-black-ter">{{ selected_user.userprofile.birthday }}</span>
+                {% else %}
+                <span class=" has-text-black-ter">Haven't set birthday</span>
+                {% endif %}
+
+            </div>
+
+        </div>
+
+        <div class="columns is-mobile" style="border-bottom: #ededed solid 1px">
+            <div class="column is-2">
+               <span class=" has-text-grey-light">Address</span>
+            </div>
+            <div class="column is-narrow">
+                {% if selected_user.userprofile %}
+                <span class=" has-text-black-ter">{{ selected_user.userprofile.address }}</span>
+                {% else %}
+                <span class=" has-text-black-ter">Haven't add address</span>
+                {% endif %}
+
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="columns" style="padding:1rem 0; ">
+    <div class="column is-2">
+        <p>Personal Introduction</p>
+    </div>
+    <div class="column">
+        <div class="content">
+            {% if selected_user.userprofile.description %}
+            {{ selected_user.userprofile.description }}
+            {% else %}
+            Haven't add personal introduction
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const buttons = document.querySelectorAll('.follow-btn');
+
+        buttons.forEach(button => {
+            button.addEventListener('click', function() {
+                const username = this.dataset.username;
+                const action = this.textContent.trim() === 'Follow' ? 'follow' : 'unfollow';
+
+                fetch(`/users/follow/${username}/`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRFToken': '{{ csrf_token }}'
+                    },
+                    body: JSON.stringify({ username: username, action: action })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        this.textContent = action === 'follow' ? 'Unfollow' : 'Follow';
+                        alert(data.message); // Optional: Show success message
+                    } else {
+                        alert(data.message); // Show error message
+                    }
+                })
+                .catch(error => console.error('Error:', error));
+            });
+        });
+    });
+</script>
+{% endblock %}

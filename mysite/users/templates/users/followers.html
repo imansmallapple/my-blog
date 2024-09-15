@@ -48,8 +48,12 @@
             <img class="is-rounded" src="{{ follower.image_url }}" alt="{{ follower.username }}">
         </figure>
         <div class="follower-info">
-            <a href="">{{ follower.username }}</a>
-            {{ follower.gender }}
+            <a href="{% url 'users:other_user_profile' follower.username %}">{{ follower.username }}</a>
+            {% if follower.signature %}
+                <span class="has-text-grey-light">{{ follower.signature }}</span>
+            {% else %}
+                <span class="has-text-grey-light">This user have no signature.</span>
+            {% endif %}
         </div>
             <button class="follow-btn button is-info" data-username="{{ follower.username }}">
                 {% if follower.is_following %}
@@ -96,8 +100,6 @@
         });
     });
 </script>
-
-
 
 {% endblock %}
 
