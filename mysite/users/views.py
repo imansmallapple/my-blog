@@ -177,5 +177,44 @@ def message_profile(request):
     return render(request, 'users/message_profile.html')
 
 
-def followers(request):
-    return render(request, 'users/followers.html')
+@login_required
+def followers(request, username):
+    target_user = get_object_or_404(User, username=username)
+    follower_list = target_user.userprofile.followers.all()
+
+    context = {
+        'target_user': target_user,
+        'followers': follower_list,
+    }
+
+    return render(request, 'users/followers.html', context)
+
+
+@login_required
+def my_followers(request):
+    user = request.user
+    follower_list = user.userprofile.followers.all()
+
+    context = {
+        'user': user,
+        'followers': follower_list,
+    }
+
+    return render(request, 'users/followers.html', context)
+
+
+@login_required
+def follow_unfollow(request, username):
+    target_user = get_object_or_404(User, username=username)
+    userprofile = request.user.userprofile
+
+    if userprofile.following.filter(id=target_user.userprofile.id).exists():
+        # 如果已经关注，取消关注
+        userprofile.following.remove(target_user.userprofile)
+        messages.success(request, f'You have unfollowed {target_user.username}')
+    else:
+        # 否则，添加到关注列表
+        userprofile.following.add(target_user.userprofile)
+        messages.success(request, f'You are now following {target_user.username}')
+
+    return redirect('followers_list', username=target_user.username)

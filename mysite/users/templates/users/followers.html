@@ -1,10 +1,61 @@
 {% extends 'users/message_profile.html' %}
 {% load static %}
 
+
 {% block title %}
 <li class="is-active"><a>Followers</a></li>
 {% endblock %}
 
 {% block content %}
-Follower list
+
+<style>
+    /* 确保 li 元素在一行中显示 */
+    .follower-item {
+        display: flex;
+        align-items: flex-start; /* 将头像对齐到顶部 */
+        margin-bottom: 10px; /* 添加底部间距 */
+        border-bottom: 1px solid #ddd; /* 添加底部边框以分隔列表项 */
+        padding: 5px 0; /* 添加内边距 */
+    }
+
+    .follower-item .image {
+        margin-right: 10px; /* 图片和其他内容之间的间距 */
+    }
+
+    .follower-item .image img {
+        width: 24px; /* 调整图片宽度 */
+        height: 24px; /* 调整图片高度 */
+        object-fit: cover; /* 确保图片适应容器 */
+        border-radius: 50%; /* 确保图片圆形 */
+    }
+
+    .follower-item .follower-info {
+        flex-grow: 1; /* 使用户名和性别占据剩余的空间 */
+        display: flex;
+        flex-direction: column; /* 垂直排列用户名和性别 */
+        justify-content: center; /* 垂直居中对齐 */
+    }
+
+    .follower-item button {
+        margin-left: auto; /* 将按钮推到右侧 */
+    }
+</style>
+{% if followers %}
+<ul>
+    {% for follower in followers %}
+    <li class="follower-item">
+        <figure class="image is-24x24">
+            <img class="is-rounded" src="{{ follower.image.url }}" alt="" srcset="">
+        </figure>
+        <div class="follower-info">
+            <a href="">{{ follower.owner.username }}</a>
+            <a href="">{{ follower.gender }}</a>
+        </div>
+            <button>Unfollow</button>
+    </li>
+    {% endfor %}
+</ul>
+{% else %}
+    <p>{{ target_user.username }} has no followers yet.</p>
+{% endif %}
 {% endblock %}

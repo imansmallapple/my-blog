@@ -17,5 +17,7 @@ urlpatterns = [
     path('invalid_link/', views.active_user, name='invalid_link'),
     path('pending_activation/', views.register, name='pending_activation'),
     path('message_profile/', views.message_profile, name='message_profile'),
-    path('followers/', views.followers, name='followers'),
+    path('follow/<str:username>/', views.follow_unfollow, name='follow_unfollow'),
+    path('users/<str:username>/followers/', views.followers, name='followers_list'),
+    path('users/my_followers/', views.my_followers, name='my_followers'),  # 当前用户的粉丝列表
 ]

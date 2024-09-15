@@ -19,6 +19,7 @@ class UserProfile(models.Model):
                               verbose_name='avatar')
     description = models.TextField('introduction', max_length=200, default='')
     signature = models.CharField('signature', max_length=100, default='')
+    followers = models.ManyToManyField('self', symmetrical=False, related_name='following', blank=True)
 
     class Meta:
         verbose_name = 'User Profile'
