@@ -20,7 +20,7 @@ def send_register_email(email, send_type='register'):
 
     if send_type == 'register':
         email_title = "Blog's registration active link"
-        email_body = 'Please click the following link to activate the account: http://127.0.0.1:8000/users/active/{0}'.format(code)
+        email_body = 'Please click the following link to activate the account: http://51.20.54.201:8000//users/active/{0}'.format(code)
         # main code of sending the email
         send_status = send_mail(email_title, email_body, 'alf138540fun@gmail.com', [email])
         if send_status:
